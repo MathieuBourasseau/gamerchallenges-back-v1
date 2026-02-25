@@ -8,6 +8,10 @@
 | email | VARCHAR(255) | - | Adresse e-mail de contact |
 | password | VARCHAR(255) | - | Mot de passe sécurisé |
 | avatar | TEXT | - | Lien vers l'image de profil |
+| favourite game | VARCHAR(50) | - | Jeu préféré de l’utilisateur |
+| social1 | TEXT | - | Lien vers réseau social de l’utilisateur |
+| social2 | TEXT | - | Lien vers réseau social de l’utilisateur |
+| social3 | TEXT | - | Lien vers réseau social de l’utilisateur |
 | role | VARCHAR(50) | - | Rôle ou niveau d'accès (ex: admin, player) |
 
 ## 2. Table : game

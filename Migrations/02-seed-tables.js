@@ -228,31 +228,25 @@ const challenge20 = await Challenge.create({
 
 
 // Participation creation
-const VideoSubmit1 = await VideoSubmit.create({
+const participation1 = await Participation.create({
     title: "video 1",
-    user_id: user1.id,
-    challenge_id: challenge1.id,
     url: "https://www.youtube.com/watch?v=EfG2Evfgp2o"
 });
-const VideoSubmit2 = await VideoSubmit.create({
+const participation2 = await Participation.create({
     title: "video 2",
-    user_id: user2.id,
-    challenge_id: challenge2.id,
     url: "https://www.youtube.com/watch?v=EfG2Evfgp2o"
 });
-const VideoSubmit3 = await VideoSubmit.create({
+const participation3 = await Participation.create({
     title: "video 3",
-    user_id: user3.id,
-    challenge_id: challenge3.id,
     url: "https://www.youtube.com/watch?v=EfG2Evfgp2o"
 });
 
 
 // Vote added to challenges
-await user2.addVoted_challenges(challenge2);
-await user3.addVoted_challenges([challenge2, challenge3]);
-await user1.addVoted_challenges([challenge1, challenge2, challenge3]);
-await user4.addVoted_challenges(challenge2);
+await user2.addVotedParticipations(participation2);
+await user3.addVotedParticipations([participation2, participation3]);
+await user1.addVotedParticipations([participation1, participation2, participation3]);
+await user4.addVotedParticipations(participation2);
 
 
 console.log("✅ Insertion des données de seed terminée");

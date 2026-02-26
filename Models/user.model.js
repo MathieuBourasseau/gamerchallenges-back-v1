@@ -21,11 +21,11 @@ User.init(
          unique: true,
       },
       password: {
-         type: DataTypes.STRING(100),
+         type: DataTypes.STRING(255),
          allowNull: false,
       },
       avatar: {
-         type: DataTypes.STRING(100),
+         type: DataTypes.STRING(255),
          allowNull: true
       },
 

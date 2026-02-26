@@ -40,18 +40,14 @@
 | title | VARCHAR(100) | - | Titre de la soumission de l'utilisateur |
 | url | TEXT | - | Lien vers la preuve de réussite (vidéo/image) |
 | challenge_id | INT | FK (challenge), NOT NULL | Challenge concerné |
+| user_id | INT | FK (user), NOT NULL | Utilisateur qui a relevé le challenge |
 
-## 5. Table : note_participation
+## 5. Table : vote_participation
 | Champ | Type | Contraintes | Description |
 | :--- | :--- | :--- | :--- |
-| id | INT | PK | Identifiant de la note |
-| user_id | INT | FK (user), NOT NULL | Utilisateur ayant voté |
-| participation_id | INT | FK (participation), NOT NULL | Participation cible |
+| user_id | INT | PK, FK (user), NOT NULL | Utilisateur ayant voté |
+| participation_id | INT | PK, FK (participation), NOT NULL | Participation cible |
+| created_at | DATETIME | NOT NULL | Date et heure du vote|
 
-## 6. Table : note_challenge
-| Champ | Type | Contraintes | Description |
-| :--- | :--- | :--- | :--- |
-| id | INT | PK | Identifiant de la note |
-| user_id | INT | FK (user), NOT NULL | Utilisateur ayant voté |
-| challenge_id | INT | FK (challenge), NOT NULL | Challenge cible |
+
 

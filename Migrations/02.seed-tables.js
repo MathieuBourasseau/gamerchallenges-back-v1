@@ -1,4 +1,4 @@
-import { User, Challenge, Participation, Game, sequelize } from "../app/models/index.js";
+import { User, Challenge, Participation, Game, sequelize } from "../Models/index.js";
 import argon2 from "argon2";
 
 console.log("🚧 Insertion des données de seed dans les tables");
@@ -6,14 +6,14 @@ console.log("🚧 Insertion des données de seed dans les tables");
 // Users creation
 const user1 = await User.create({
     username: "alice",
-    mail: "alice@example.com",
+    email: "alice@example.com",
     password: await argon2.hash("password1"),
     role: "admin",
     avatar : "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Flepassetempsderose.l.e.pic.centerblog.net%2Fo%2Faed26788.jpg&f=1&nofb=1&ipt=dcdddae0fc7ca8ba1ecbab1ddb781f74146d86320a8c3c9d0f322f168c2ef69e"
 });
 const user2 = await User.create({
     username: "bob",
-    mail: "bob@example.com",
+    email: "bob@example.com",
     password: await argon2.hash("password2"),
     avatar: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi2.wp.com%2Fdropthespotlight.com%2Fwp-content%2Fuploads%2F2020%2F05%2Fundertaker.jpg%3Ffit%3D960%2C960%26ssl%3D1&f=1&nofb=1&ipt=45e1f3a51c6b2de757328c1a113837158609da227d68b8ad53e2d664c3c671c3",
     youtube: "https://www.youtube.com/",
@@ -23,14 +23,14 @@ const user2 = await User.create({
 });
 const user3 = await User.create({
     username: "charlie",
-    mail: "charlie@example.com",
+    email: "charlie@example.com",
     password: await argon2.hash("password3"),
     isBanned: true,
     avatar : "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstaticg.sportskeeda.com%2Feditor%2F2023%2F04%2F5a0bc-16823053913430-1920.jpg&f=1&nofb=1&ipt=cf54f2619dae66f5d9df9d4863327807f248782c2307ec1e1c8a8a701b750cdd"
 });
 const user4 = await User.create({
     username: "david",
-    mail: "david@example.com",
+    email: "david@example.com",
     password: await argon2.hash("password4"),
     avatar : "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmario.wiki.gallery%2Fimages%2F1%2F15%2FPlay_Nintendo_Mario_Profile.png&f=1&nofb=1&ipt=23e580afb4f05a902b75840aae4373eae24833972e1e8688515452c854b1ae8b",
     
@@ -234,11 +234,11 @@ const participation1 = await Participation.create({
 });
 const participation2 = await Participation.create({
     title: "video 2",
-    url: "https://www.youtube.com/watch?v=EfG2Evfgp2o"
+    url: "https://www.youtube.com/watch?v=PicaaV-UpEQ"
 });
 const participation3 = await Participation.create({
     title: "video 3",
-    url: "https://www.youtube.com/watch?v=EfG2Evfgp2o"
+    url: "https://www.youtube.com/watch?v=QCxaK0I2ijU"
 });
 
 

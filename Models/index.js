@@ -6,14 +6,14 @@ import { sequelize } from "./sequelize.client.js";
 
 
 // challenge - user
-User.hasMany(Challenge, {foreignKey: "user_id", as: "challenges"} );
+User.hasMany(Challenge, {foreignKey: "user_id", as: "challenges"} ); 
 Challenge.belongsTo(User, {foreignKey: "user_id", as: "creator"});
 
 // challenge - game
 Challenge.belongsTo(Game, {foreignKey: "game_id", as: "game"});
 Game.hasMany(Challenge, {foreignKey: "game_id", as: "challenges"});
 
-// participation - user
+// participation proposée - user
 Participation.belongsTo(User, {foreignKey: "user_id", as: "player"});
 User.hasMany(Participation, {foreignKey: "user_id", as: "participations"});
 

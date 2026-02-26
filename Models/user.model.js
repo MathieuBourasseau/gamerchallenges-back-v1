@@ -47,11 +47,24 @@ User.init(
       discord: {
          type: DataTypes.TEXT,
          allowNull: true
-      }
+      },
+
+      isBanned: {
+         type: DataTypes.BOOLEAN,
+         defaultValue: false,
+         allowNull: false
+      },
+
+      role: {
+         type: DataTypes.ENUM(["user", "admin"]), // Only "user" and "admin" values will be accepted here
+         allowNull: false,
+         defaultValue: "user",
+      },
+
    },
    {
-      sequelize, 
+      sequelize,
       modelName: "User",
-      tableName: "user", 
+      tableName: "user",
    }
 );

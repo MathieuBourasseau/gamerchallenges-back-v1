@@ -1,4 +1,4 @@
-import Game from "../Models/index.js";
+import { Game } from "../Models/index.js";
 import { Sequelize } from "sequelize";
 
 export const gameController = {
@@ -9,7 +9,7 @@ export const gameController = {
 
 		try {
 			const games = await Game.findAll({
-				order: [["release_date", "ASC"]],
+				order: [["title", "ASC"]],
 				limit,
 				offset,
 			});
@@ -24,6 +24,7 @@ export const gameController = {
 				games,
 			});
 		} catch (error) {
+			console.error("Erreur Sequelize :", error);
 			res
 				.status(500)
 				.json({ error: "Erreur lors de la récupération des jeux" });

@@ -30,4 +30,14 @@ export const gameController = {
 				.json({ error: "Erreur lors de la récupération des jeux" });
 		}
 	},
+
+	async getGameById(req, res) {
+		try {
+			const game = await Game.findByPk(req.params.id);
+			if (!game) return res.status(404).json({ error: "Jeu non trouvé" });
+			res.json(game);
+		} catch (error) {
+			res.status(500).json({ error: "Erreur serveur" });
+		}
+	},
 };

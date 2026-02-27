@@ -265,6 +265,23 @@ const challenge20 = await Challenge.create({
 await challenge1.setGame(game1);
 await challenge2.setGame(game2);
 await challenge3.setGame(game3);
+await challenge4.setGame(game4);
+await challenge5.setGame(game5);
+await challenge6.setGame(game6);
+await challenge7.setGame(game7);
+await challenge8.setGame(game8);
+await challenge9.setGame(game9);
+await challenge10.setGame(game10);
+await challenge11.setGame(game11);
+await challenge12.setGame(game12);
+await challenge13.setGame(game1);
+await challenge14.setGame(game2);
+await challenge15.setGame(game3);
+await challenge16.setGame(game4);
+await challenge17.setGame(game5);
+await challenge18.setGame(game6);
+await challenge19.setGame(game7);
+await challenge20.setGame(game8);
 
 // link user to challenges
 await user1.addChallenge(challenge1);

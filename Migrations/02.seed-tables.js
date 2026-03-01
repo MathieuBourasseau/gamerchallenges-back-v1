@@ -333,5 +333,11 @@ await user1.addVotedParticipations([
 ]);
 await user4.addVotedParticipations(participation2);
 
+// link participation to users
+await user1.addParticipations([participation1, participation2, participation3]);
+await user2.addParticipations([participation2]);
+await user3.addParticipations([participation3]);
+await user4.addParticipations([]);
+
 console.log("✅ Insertion des données de seed terminée");
 await sequelize.close();

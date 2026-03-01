@@ -16,39 +16,13 @@
 
 * Lier le Front et le Back
 
-- ## **Solutions / Compréhensions :**
-
-- ## **Docs et divers outils :**
-
-- ## **Décisions prises :**
-
-- ## **À faire demain :**
-
 ---
 
-## Problèmes rencontrés & solutions
+### 01/03/2026
 
-### Problème
+- ## **Tâches réalisées :**
 
-- **Description :**
-- **Cause :**
-- **Solution :**
-- **Ce qu'on a appris :**
+Sur une nouvelle branche `feat/my-challenges` mise en place d'un fichier `user.controller.js` avec deux méthodes pour le moment `getChallengesByUser` et `getParticipationsByUser`, un autre pour les routes `user.router.js` et de deux nouvelles routes dans celui-ci obtenir les challenges crées par un user et les participations d'un user .
+Un peu de seeding aussi pour associer quelques paricipations à certains users..
 
----
-
-## Décisions techniques (et pourquoi)
-
-- **Décision :**
-  **Pourquoi :**
-
-- **Décision :**  
-  **Pourquoi :**
-
----
-
-## Notes diverses
-
--
--
--
+j'ai bien mis les routes dans le `index.js` du dossier `Routers` pour que ça soit pris en compte. Et pareil pour les controllers.

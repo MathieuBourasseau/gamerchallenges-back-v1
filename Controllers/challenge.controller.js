@@ -1,4 +1,4 @@
-import { Challenge, Game } from "../Models/index.js";
+import { Challenge, Game, sequelize } from "../Models/index.js";
 
 export const challengeController = {
   async getAllChallenges(req, res) {
@@ -11,6 +11,7 @@ export const challengeController = {
             attributes: ["id", "title", "cover"],
           },
         ],
+        // order: sequelize.random(), on verra pour le tri avec les copains
       });
       res.json(challenges);
     } catch (error) {

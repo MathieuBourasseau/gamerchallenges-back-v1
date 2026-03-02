@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { newMessage } from "../Schemas/index.js";
+import { checkMessage } from "../Middlewares/index.js";
 
 // Router to handle contact request 
 export const contactRouter = Router();
 
 // Post request protected by newMessage schema
-contactRouter.post("/contact", newMessage, contactController.sendMessage)
+contactRouter.post("/contact", checkMessage , contactController.sendMessage)

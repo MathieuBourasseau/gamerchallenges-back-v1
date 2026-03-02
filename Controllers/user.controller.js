@@ -42,6 +42,11 @@ export const userController = {
         where: { user_id: id },
         include: [
           {
+            model: User,
+            as: "player",
+            attributes: ["id", "username", "avatar"],
+          },
+          {
             model: Challenge,
             as: "challenge",
             include: [

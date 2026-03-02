@@ -26,3 +26,5 @@ Sur une nouvelle branche `feat/my-challenges` mise en place d'un fichier `user.c
 Un peu de seeding aussi pour associer quelques paricipations à certains users..
 
 j'ai bien mis les routes dans le `index.js` du dossier `Routers` pour que ça soit pris en compte. Et pareil pour les controllers.
+
+On envoie bien les données dans les pages : d'accueil (avec les trois challenges avec le plus de vote), des challenges (la liste entière) et les participations propre à un user.

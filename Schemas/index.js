@@ -1,0 +1,1 @@
+export { newMessage } from "./message.schema.js"

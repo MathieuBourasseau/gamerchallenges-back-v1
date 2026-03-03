@@ -5,12 +5,14 @@ import {
 	User,
 	sequelize,
 } from "../Models/index.js";
-import { fn, col } from "sequelize";
+import { fn, col, Op } from "sequelize";
 
 export const challengeController = {
 	async getAllChallenges(req, res) {
 		try {
+			const { gameId } = req.query; // facultatif : si on veut afficher le jeu associé
 			const challenges = await Challenge.findAll({
+				where: gameId ? { game_id: gameId } : undefined, // filtre optionnel pour afficher le jeu associé
 				include: [
 					{
 						model: Game,
@@ -52,7 +54,8 @@ export const challengeController = {
 						],
 					},
 				],
-				group: [ // group pour éviter les doublons et n'afficher que les votes
+				group: [
+					// group pour éviter les doublons et n'afficher que les votes
 					"Challenge.id",
 					"game.id",
 					"creator.id",

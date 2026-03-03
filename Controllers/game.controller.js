@@ -38,8 +38,8 @@ export const gameController = {
 					{
 						model: Challenge,
 						as: "challenges",
-						attributes: ["name", "created_at"],
-						order: [["created_at", "DESC"]],
+						attributes: ["id", "name", "created_at"],
+						// order: [["created_at", "DESC"]],
 					},
 				],
 			});

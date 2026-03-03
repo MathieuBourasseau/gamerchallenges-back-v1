@@ -146,121 +146,145 @@ const game12 = await Game.create({
 const challenge1 = await Challenge.create({
 	name: "Survivant des 10 minutes",
 	description: "Tiens-toi en vie pendant au moins 10 minutes sans mourir.",
+	game_id: game1.id,
+	user_id: user1.id,
 });
 
 const challenge2 = await Challenge.create({
 	name: "Tir parfait",
-	description:
-		"Montre ta précision ultime : réussis 10 tirs à la tête consécutifs sans en manquer un seul. La moindre erreur te ramènera à zéro — calme, précision et timing seront essentiels.",
+	description: "Réussis 10 tirs à la tête consécutifs.",
+	game_id: game2.id,
+	user_id: user1.id,
 });
 
 const challenge3 = await Challenge.create({
 	name: "Sans utiliser de soins",
-	description:
-		"Termine un niveau complet sans utiliser de soins ni de boucliers. Chaque erreur pourrait être fatale, donc anticipe, esquive et économise tes ressources pour survivre jusqu’à la fin.",
+	description: "Termine un niveau sans utiliser de soins ni boucliers.",
+	game_id: game3.id,
+	user_id: user1.id,
 });
 
 const challenge4 = await Challenge.create({
 	name: "Vitesse éclair",
-	description:
-		"Termine une mission en moins de 5 minutes. Optimise ton itinéraire, ne perds pas de temps à combattre inutilement et prouve que la rapidité est ton meilleur atout.",
+	description: "Termine une mission en moins de 5 minutes.",
+	game_id: game4.id,
+	user_id: user2.id,
 });
 
 const challenge5 = await Challenge.create({
 	name: "Pacifiste",
-	description:
-		"Complète un niveau sans éliminer le moindre ennemi. Utilise la furtivité, la diversion et l’intelligence pour progresser sans jamais déclencher le combat.",
+	description: "Complète un niveau sans éliminer le moindre ennemi.",
+	game_id: game5.id,
+	user_id: user2.id,
 });
 
 const challenge6 = await Challenge.create({
 	name: "Tireur d'élite",
-	description:
-		"Termine une mission en utilisant uniquement des armes à longue portée. Chaque tir doit être réfléchi et précis : pas de fusils d’assaut, pas de grenades, juste ton œil et ton fusil.",
+	description: "Termine une mission uniquement avec des armes à longue portée.",
+	game_id: game6.id,
+	user_id: user2.id,
 });
 
 const challenge7 = await Challenge.create({
 	name: "Mode furtif",
-	description:
-		"Infiltre une zone entière sans te faire repérer une seule fois. Reste dans l’ombre, neutralise discrètement, et atteins ton objectif sans déclencher d’alarme.",
+	description: "Infiltre une zone entière sans te faire repérer.",
+	game_id: game7.id,
+	user_id: user3.id,
 });
 
 const challenge8 = await Challenge.create({
 	name: "Combat au corps-à-corps",
-	description:
-		"Termine une mission uniquement avec des attaques de mêlée. Pas d’armes à feu, pas de projectiles : montre ta maîtrise du combat rapproché et ton sang-froid.",
+	description: "Termine une mission uniquement avec des attaques de mêlée.",
+	game_id: game8.id,
+	user_id: user3.id,
 });
 
 const challenge9 = await Challenge.create({
 	name: "Zéro dégât",
-	description:
-		"Finis un niveau sans subir le moindre dégât. Tu devras esquiver, anticiper et jouer à la perfection : une seule erreur, et tout est à recommencer.",
+	description: "Finis un niveau sans subir le moindre dégât.",
+	game_id: game9.id,
+	user_id: user3.id,
 });
 
 const challenge10 = await Challenge.create({
 	name: "Récolteur expert",
-	description:
-		"Collecte 100 ressources dans une seule session de jeu. Explore chaque recoin, fouille les coffres et surveille ton inventaire pour atteindre ce score impressionnant.",
+	description: "Collecte 100 ressources dans une seule session de jeu.",
+	game_id: game10.id,
+	user_id: user3.id,
 });
 
 const challenge11 = await Challenge.create({
 	name: "Maître des combos",
-	description:
-		"Réalise une série de 20 coups sans interruption. Le timing et la maîtrise des enchaînements seront la clé pour maintenir ta série intacte.",
+	description: "Réalise une série de 20 coups sans interruption.",
+	game_id: game1.id,
+	user_id: user4.id,
 });
 
 const challenge12 = await Challenge.create({
 	name: "Explorateur complet",
-	description:
-		"Découvre 100% de la carte dans un niveau. Laisse aucun endroit inexploré et révèle tous les secrets cachés de la zone.",
+	description: "Découvre 100% de la carte dans un niveau.",
+	game_id: game2.id,
+	user_id: user4.id,
 });
 
 const challenge13 = await Challenge.create({
 	name: "Course contre la montre",
-	description:
-		"Bats un boss en moins de 2 minutes. Utilise tes meilleures compétences et inflige un maximum de dégâts sans relâche pour vaincre avant la fin du chrono.",
+	description: "Bats un boss en moins de 2 minutes.",
+	game_id: game3.id,
+	user_id: user4.id,
 });
 
 const challenge14 = await Challenge.create({
 	name: "Aucun objet",
 	description:
-		"Termine une mission sans utiliser le moindre objet ou compétence spéciale. Seules tes capacités de base feront la différence entre la victoire et la défaite.",
+		"Termine une mission sans utiliser le moindre objet ou compétence spéciale.",
+	game_id: game4.id,
+	user_id: user4.id,
 });
 
 const challenge15 = await Challenge.create({
 	name: "Champion des défis",
-	description:
-		"Accomplis 5 défis secondaires en une seule partie. Planifie ton itinéraire, optimise ton temps et montre que rien ne t’arrête.",
+	description: "Accomplis 5 défis secondaires en une seule partie.",
+	game_id: game5.id,
+	user_id: user4.id,
 });
 
 const challenge16 = await Challenge.create({
 	name: "Zigzag infernal",
-	description:
-		"Esquive 50 attaques ennemies sans te faire toucher. Tes réflexes et ton anticipation seront mis à rude épreuve — reste mobile et imprévisible.",
+	description: "Esquive 50 attaques ennemies sans te faire toucher.",
+	game_id: game6.id,
+	user_id: user4.id,
 });
 
 const challenge17 = await Challenge.create({
 	name: "Survivant ultime",
-	description:
-		"Survis à 10 vagues d’ennemis sans mourir ni te cacher. C’est un test d’endurance, de gestion des ressources et de concentration absolue.",
+	description: "Survis à 10 vagues d’ennemis sans mourir ni te cacher.",
+	game_id: game7.id,
+	user_id: user4.id,
 });
 
 const challenge18 = await Challenge.create({
 	name: "Sans alarme",
-	description:
-		"Termine une mission d’infiltration sans déclencher une seule alarme. La moindre erreur sera fatale : planifie chaque pas et observe tes adversaires.",
+	description: "Termine une mission d’infiltration sans déclencher d’alarme.",
+	game_id: game8.id,
+	user_id: user4.id,
 });
 
 const challenge19 = await Challenge.create({
 	name: "Coureur infatigable",
-	description:
-		"Parcours une distance totale de 10 km dans le jeu sans utiliser de véhicule ni repos. Montre ton endurance et ta détermination.",
+	description: "Parcours 10 km dans le jeu sans utiliser de véhicule ni repos.",
+	game_id: game9.id,
+	user_id: user4.id,
 });
 
 const challenge20 = await Challenge.create({
 	name: "Maître stratège",
 	description:
-		"Remporte une mission difficile en mode solo sans subir de pertes ni gaspiller de munitions. Chaque balle compte, chaque décision aussi.",
+		"Remporte une mission difficile en solo sans pertes ni gaspillage de munitions.",
+	game_id: game10.id,
+	user_id: user4.id,
 });
+
 // Link challenges to games
 await challenge1.setGame(game1);
 await challenge2.setGame(game2);

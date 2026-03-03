@@ -1,0 +1,1 @@
+export { checkMessage } from "./contact.middleware.js"

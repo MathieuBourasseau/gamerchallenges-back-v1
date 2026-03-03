@@ -1,4 +1,4 @@
-import { Game } from "../Models/index.js";
+import { Game, Challenge } from "../Models/index.js";
 import { Sequelize } from "sequelize";
 
 export const gameController = {
@@ -33,7 +33,17 @@ export const gameController = {
 
 	async getGameById(req, res) {
 		try {
-			const game = await Game.findByPk(req.params.id);
+			const game = await Game.findByPk(req.params.id, {
+				include: [
+					{
+						model: Challenge,
+						as: "challenges",
+						attributes: ["name", "created_at"],
+						order: [["created_at", "DESC"]],
+					},
+				],
+			});
+
 			if (!game) return res.status(404).json({ error: "Jeu non trouvé" });
 			res.json(game);
 		} catch (error) {

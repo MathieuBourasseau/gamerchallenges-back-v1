@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { checkMessage } from "../Middlewares/index.js";
+import { contactController } from "../Controllers/index.js";
 
 // Router to handle contact request 
 export const contactRouter = Router();

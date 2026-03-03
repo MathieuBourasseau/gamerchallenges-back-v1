@@ -5,4 +5,4 @@ import { checkMessage } from "../Middlewares/index.js";
 export const contactRouter = Router();
 
 // Post request protected by newMessage schema
-contactRouter.post("/contact", checkMessage , contactController.sendMessage)
+contactRouter.post("/contact", checkMessage , contactController.sendMessage);

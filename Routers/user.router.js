@@ -3,6 +3,7 @@ import { userController } from "../Controllers/user.controller.js";
 
 export const userRouter = Router();
 
+userRouter.get("/users/:id", userController.getUserById);
 userRouter.get("/users/:id/challenges", userController.getChallengesByUser);
 userRouter.get(
   "/users/:id/participations",

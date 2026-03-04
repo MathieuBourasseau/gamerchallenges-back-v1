@@ -20,6 +20,8 @@ export const rankingController = {
 				],
 				group: ["User.id"],
 				order: [[fn("COUNT", col("participations.id")), "DESC"]],
+				limit: 3,
+				subQuery: false, // évite les requêtes imbriquées et les bugs : une seule requête SQL avec tous les JOIN dans le FROM
 			});
 
 			res.json(ranking);
@@ -55,6 +57,8 @@ export const rankingController = {
 				],
 				group: ["User.id"],
 				order: [[fn("COUNT", col("participations->voters.id")), "DESC"]],
+				limit: 3,
+				subQuery: false,
 			});
 
 			res.json(ranking);

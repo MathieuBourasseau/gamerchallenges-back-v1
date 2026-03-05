@@ -6,7 +6,6 @@ import {
 	sequelize,
 } from "../Models/index.js";
 import { fn, col, Op } from "sequelize";
-import { challengeRouter } from "../Routers/challenge.router.js";
 
 export const challengeController = {
 	async getAllChallenges(req, res) {

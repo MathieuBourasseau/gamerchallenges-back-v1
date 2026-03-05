@@ -21,8 +21,8 @@ export const rankingController = {
 				group: ["User.id"],
 				order: [[fn("COUNT", col("participations.id")), "DESC"]],
 				limit: 3,
-				subQuery: false, // évite les requêtes imbriquées et les bugs : une seule requête SQL avec tous les JOIN dans le FROM
-			});
+				subQuery: false,
+			}); // Avoid subqueries and bugs: do all JOINs in a single SQL query
 
 			res.json(ranking);
 		} catch (error) {

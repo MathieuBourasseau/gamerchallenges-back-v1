@@ -1,14 +1,11 @@
 import { Router } from "express";
 import { userController } from "../Controllers/user.controller.js";
-import { validId } from "../Middlewares/index.js";
-
 
 export const userRouter = Router();
 
-userRouter.get("/users/:id/challenges", validId, userController.getChallengesByUser);
+userRouter.get("/users/:id/challenges", userController.getChallengesByUser);
 userRouter.get(
   "/users/:id/participations",
-  validId,
   userController.getParticipationsByUser,
 );
 

@@ -18,5 +18,5 @@ app.use(xss());
 app.use(apiRouter);
 
 app.listen(PORT, () => {
-  console.log(`GamerChallenges is "streaming" 🎮 on http://localhost:${PORT}`);
+	console.log(`GamerChallenges is "streaming" 🎮 on http://localhost:${PORT}`);
 });

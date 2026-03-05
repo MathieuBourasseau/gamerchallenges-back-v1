@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { challengeController } from "../Controllers/challenge.controller.js";
+import { validId } from "../Middlewares/index.js";
 
 export const challengeRouter = Router();
 
@@ -7,4 +8,4 @@ export const challengeRouter = Router();
 challengeRouter.get("/challenges", challengeController.getAllChallenges);
 
 // Route to show details of one challenge 
-challengeRouter.get("/challenges/:id", challengeController.getOneChallenge);
+challengeRouter.get("/challenges/:id", validId, challengeController.getOneChallenge);

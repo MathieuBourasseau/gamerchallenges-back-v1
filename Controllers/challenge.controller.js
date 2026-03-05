@@ -82,12 +82,26 @@ export const challengeController = {
 			const { id } = req.params;
 
 			// Check if the challenge is existing in DB
-			const challenge = await Challenge.findByPk(id);
+			const challenge = await Challenge.findByPk(id, {
+
+				include: [
+					{
+						model: Game,
+						as: "game",
+						attributes: ["id", "cover"] // Get image bounded to the game 
+					},
+					{
+						model: User,
+						as: "creator",
+						attributes: ["id", "username"] // Get the creator that posted the challenge
+					}
+				]
+			});
 
 			// Error message sent if the challenge does not exist
 			if (!challenge) {
 				console.error("Le challenge demandé n'existe pas.")
-				return res.status(404).json({error : "Le challenge demandé n'existe pas."})
+				return res.status(404).json({ error: "Le challenge demandé n'existe pas." })
 			};
 
 			// Sent to front the challenge selected
@@ -96,7 +110,7 @@ export const challengeController = {
 
 		} catch (error) {
 			console.error("Erreur lors de la recherche du challenge", error.message);
-			return res.status(500).json({ error: "Un problème est survenu avec le serveur."});
+			return res.status(500).json({ error: "Un problème est survenu avec le serveur." });
 		}
 	}
 };

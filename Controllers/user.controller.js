@@ -1,6 +1,22 @@
 import { User, Challenge, Participation, Game } from "../Models/index.js";
 
 export const userController = {
+  //  obtenir un user par son ID
+  async getUserById(req, res) {
+    try {
+      const { id } = req.params;
+      const user = await User.findByPk(id, {
+        attributes: ["id", "username", "email", "avatar"],
+      });
+      if (!user) {
+        return res.status(404).json({ message: "User non trouvé" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  },
   //  les challenges créés par un user
   async getChallengesByUser(req, res) {
     try {

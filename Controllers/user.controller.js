@@ -1,4 +1,5 @@
 import { User } from "../Models/index.js";
+import argon2 from "argon2";
 
 export const userController = {
 	// modèle Blablabook pouvant servir pour la partie register/login
@@ -50,13 +51,15 @@ export const userController = {
 	async deleteUser(req, res) {
 		try {
 			const { id } = req.params;
-			const authUserId = req.user.id;
 
-			if (parseInt(id) !== authUserId) {
-				return res
-					.status(403)
-					.json({ error: "Vous ne pouvez pas supprimer ce compte" });
-			}
+			// ⚠️ to add back when auth middleware created
+			//	const authUserId = req.user.id;
+
+			// if (parseInt(id) !== authUserId) {
+			// 	return res
+			// 		.status(403)
+			// 		.json({ error: "Vous ne pouvez pas supprimer ce compte" });
+			// }
 
 			const deletedCount = await User.destroy({ where: { id } });
 
@@ -73,22 +76,7 @@ export const userController = {
 		}
 	},
 
-	async uploaduserAvatar(req, res) {
-		try {
-			const { userId } = req.params;
-			if (!userId) {
-				return res.status(400).json({ error: `L'ID utilisateur est requis` });
-			}
-			user.avatar = req.file.path;
-			await user.save();
-			res.status(200).json({ message: "Image téléchargée avec succès" });
-		} catch (error) {
-			console.error(error);
-			res.status(500).json({ error: "Erreur serveur" });
-		}
-	},
-
-	// ⚠️ method to complete with security before validating changes, according to the auth method
+	// ⚠️ method to complete with security before validating changes in "mon compte", according to the auth method
 	async editUserAccount(req, res) {
 		try {
 			const { id } = req.params;

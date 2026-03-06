@@ -6,7 +6,16 @@ export const userController = {
 		try {
 			const { id } = req.params;
 			const user = await User.findByPk(id, {
-				attributes: ["id", "username", "email", "avatar"],
+				attributes: [
+					"id",
+					"username",
+					"email",
+					"avatar",
+					"favouriteGame",
+					"twitch",
+					"youtube",
+					"discord",
+				],
 			});
 			if (!user) {
 				return res.status(404).json({ message: "User non trouvé" });

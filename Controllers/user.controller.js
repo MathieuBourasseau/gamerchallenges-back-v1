@@ -47,7 +47,6 @@ export const userController = {
 		}
 	},
 
-	// delete user
 	async deleteUser(req, res) {
 		try {
 			const { id } = req.params;
@@ -68,11 +67,24 @@ export const userController = {
 			return res.status(200).json({ message: "Compte supprimé avec succès" });
 		} catch (error) {
 			console.error(error);
-			return res
-				.status(500)
-				.json({
-					error: "Une erreur est survenue lors de la suppression du compte",
-				});
+			return res.status(500).json({
+				error: "Une erreur est survenue lors de la suppression du compte",
+			});
+		}
+	},
+
+	async uploaduserAvatar(req, res) {
+		try {
+			const { userId } = req.params;
+			if (!userId) {
+				return res.status(400).json({ error: `L'ID utilisateur est requis` });
+			}
+			user.avatar = req.file.path;
+			await user.save();
+			res.status(200).json({ message: "Image téléchargée avec succès" });
+		} catch (error) {
+			console.error(error);
+			res.status(500).json({ error: "Erreur serveur" });
 		}
 	},
 };

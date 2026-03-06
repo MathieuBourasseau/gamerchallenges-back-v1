@@ -16,42 +16,69 @@ export const challengeController = {
 
 	//  --- METHOD TO GET A CHALLENGE BY ITS ID ---
 	async getOneChallenge(req, res) {
-
 		try {
-
-			// Get id from params 
+			// Get id from params
 			const { id } = req.params;
 
 			// Check if the challenge is existing in DB
 			const challenge = await Challenge.findByPk(id, {
-
 				include: [
 					{
 						model: Game,
 						as: "game",
-						attributes: ["id", "cover"] // Get image bounded to the game 
+						attributes: ["id", "cover"], // Get image bounded to the game
 					},
 					{
 						model: User,
 						as: "creator",
-						attributes: ["id", "username"] // Get the creator that posted the challenge
-					}
-				]
+						attributes: ["id", "username"], // Get the creator that posted the challenge
+					},
+				],
 			});
 
 			// Error message sent if the challenge does not exist
 			if (!challenge) {
-				console.error("Le challenge demandé n'existe pas.")
-				return res.status(404).json({ error: "Le challenge demandé n'existe pas." })
-			};
+				console.error("Le challenge demandé n'existe pas.");
+				return res
+					.status(404)
+					.json({ error: "Le challenge demandé n'existe pas." });
+			}
 
 			// Sent to front the challenge selected
 			return res.status(200).json(challenge);
-
-
 		} catch (error) {
 			console.error("Erreur lors de la recherche du challenge", error.message);
-			return res.status(500).json({ error: "Un problème est survenu avec le serveur." });
+			return res
+				.status(500)
+				.json({ error: "Un problème est survenu avec le serveur." });
 		}
-	}
+	},
+
+	//  les challenges créés par un user
+	async getChallengesByUser(req, res) {
+		try {
+			const { id } = req.params;
+
+			const user = await User.findByPk(id);
+			if (!user) {
+				return res.status(404).json({ message: "User non trouvé" });
+			}
+
+			const userChallenges = await Challenge.findAll({
+				where: { user_id: id },
+				include: [
+					{
+						model: Game,
+						as: "game",
+						attributes: ["id", "title", "cover"],
+					},
+				],
+			});
+
+			res.json(userChallenges);
+		} catch (error) {
+			console.error(error);
+			res.status(500).json({ message: "Erreur serveur" });
+		}
+	},
 };

@@ -87,4 +87,38 @@ export const userController = {
 			res.status(500).json({ error: "Erreur serveur" });
 		}
 	},
+
+	// ⚠️ method to complete with security before validating changes, according to the auth method
+	async editUserAccount(req, res) {
+		try {
+			const { id } = req.params;
+
+			if (!id) {
+				return res.status(400).json({ error: "L'ID utilisateur est requis" });
+			}
+
+			const user = await User.findByPk(id);
+			if (!user)
+				return res.status(404).json({ error: "Utilisateur non trouvé" });
+
+			const validatedData = { ...req.body };
+
+			if (req.file) {
+				validatedData.avatar = req.file.path;
+			}
+
+			if (validatedData.password) {
+				validatedData.password = await argon2.hash(validatedData.password);
+			}
+
+			await user.update(validatedData);
+
+			res.status(200).json({ user });
+		} catch (error) {
+			console.error(error);
+			res
+				.status(500)
+				.json({ error: "Erreur lors de la modification des informations" });
+		}
+	},
 };

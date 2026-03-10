@@ -15,7 +15,7 @@ export const userController = {
 	// },
 
 	// async loginUser(req, res) {
-	//   const { username, password } = req.body;
+	//   const { username, email, password } = req.body;
 	//   const user = await User.findOne({ where: { username: username } });
 	//   if (!user || user.password !== password) {
 	//     return res.status(401).json({ error: 'Utilisateur non valide' });
@@ -51,15 +51,6 @@ export const userController = {
 	async deleteUser(req, res) {
 		try {
 			const { id } = req.params;
-
-			// ⚠️ to add back when auth middleware created
-			//	const authUserId = req.user.id;
-
-			// if (parseInt(id) !== authUserId) {
-			// 	return res
-			// 		.status(403)
-			// 		.json({ error: "Vous ne pouvez pas supprimer ce compte" });
-			// }
 
 			const deletedCount = await User.destroy({ where: { id } });
 

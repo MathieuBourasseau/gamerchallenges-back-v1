@@ -6,9 +6,11 @@ import { userRouter } from "./user.router.js";
 import { contactRouter } from "./contact.router.js";
 import { rankingRouter } from "./ranking.router.js";
 import { userParticipationsRouter } from "./userParticipations.router.js";
+import { searchRouter } from "./search.router.js";
 
 export const apiRouter = Router();
 
+apiRouter.use(searchRouter);
 apiRouter.use(homeRouter);
 apiRouter.use(challengeRouter);
 apiRouter.use(gameRouter);

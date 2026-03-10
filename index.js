@@ -15,6 +15,8 @@ app.use(cors());
 
 app.use(xss());
 
+app.use("/uploads", express.static("uploads"));
+
 app.use(apiRouter);
 
 app.listen(PORT, () => {

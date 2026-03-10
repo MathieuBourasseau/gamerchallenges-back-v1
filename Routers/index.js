@@ -5,6 +5,7 @@ import { gameRouter } from "./game.router.js";
 import { userRouter } from "./user.router.js";
 import { contactRouter } from "./contact.router.js";
 import { rankingRouter } from "./ranking.router.js";
+import { userParticipationsRouter } from "./userParticipations.router.js";
 
 export const apiRouter = Router();
 
@@ -14,3 +15,4 @@ apiRouter.use(gameRouter);
 apiRouter.use(userRouter);
 apiRouter.use(contactRouter);
 apiRouter.use(rankingRouter);
+apiRouter.use(userParticipationsRouter);

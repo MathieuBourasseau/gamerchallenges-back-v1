@@ -5,9 +5,6 @@ export function validId (req, res, next) {
 
     try {
 
-        Joi.attempt(req.params, checkIdSchema);
-        // Check in params the key "id" and converted it in number
-
         const idFormatted = Joi.attempt(req.params, checkIdSchema); // idFormatted contains the new id converted in number
         req.params = idFormatted // req.params takes the value of this new id converted in number for controller
         next();

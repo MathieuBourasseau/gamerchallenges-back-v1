@@ -22,7 +22,7 @@ export const userController = {
 	//   }
 	// },
 
-	// Liste de tous les users
+	// All users list
 	async getAllUsers(req, res) {
 		try {
 			const users = await User.findAll({

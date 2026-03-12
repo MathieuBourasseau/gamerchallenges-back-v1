@@ -367,6 +367,7 @@ await user4.addVotedParticipations(participation2);
 await participation1.setPlayer(user1);
 await participation2.setPlayer(user1);
 await participation3.setPlayer(user1);
+await participation4.setPlayer(user3);
 
 console.log("✅ Insertion des données de seed terminée");
 await sequelize.close();

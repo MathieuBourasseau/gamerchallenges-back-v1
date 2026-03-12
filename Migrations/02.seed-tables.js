@@ -43,6 +43,30 @@ const user4 = await User.create({
   avatar:
     "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmario.wiki.gallery%2Fimages%2F1%2F15%2FPlay_Nintendo_Mario_Profile.png&f=1&nofb=1&ipt=23e580afb4f05a902b75840aae4373eae24833972e1e8688515452c854b1ae8b",
 });
+const user5 = await User.create({
+  username: "elena",
+  email: "elena@example.com",
+  password: await argon2.hash("password5"),
+  avatar:
+    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmario.wiki.gallery%2Fimages%2F1%2F15%2FPlay_Nintendo_Mario_Profile.png&f=1&nofb=1&ipt=23e580afb4f05a902b75840aae4373eae24833972e1e8688515452c854b1ae8b",
+});
+const user6 = await User.create({
+  username: "franck",
+  email: "franck@example.com",
+  password: await argon2.hash("password6"),
+  avatar:
+    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmario.wiki.gallery%2Fimages%2F1%2F15%2FPlay_Nintendo_Mario_Profile.png&f=1&nofb=1&ipt=23e580afb4f05a902b75840aae4373eae24833972e1e8688515452c854b1ae8b",
+});
+const user7 = await User.create({
+  username: "gina",
+  email: "gina@example.com",
+  password: await argon2.hash("password7"),
+  avatar:
+    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmario.wiki.gallery%2Fimages%2F1%2F15%2FPlay_Nintendo_Mario_Profile.png&f=1&nofb=1&ipt=23e580afb4f05a902b75840aae4373eae24833972e1e8688515452c854b1ae8b",
+});
+
+// Create an array for all users to facilitate relationships
+const allUsers = [user1, user2, user3, user4, user5, user6, user7];
 
 // Games creation
 const game1 = await Game.create({
@@ -216,21 +240,21 @@ const challenge10 = await Challenge.create({
 const challenge11 = await Challenge.create({
   name: "Maître des combos",
   description: "Réalise une série de 20 coups sans interruption.",
-  game_id: game1.id,
+  game_id: game11.id,
   user_id: user4.id,
 });
 
 const challenge12 = await Challenge.create({
   name: "Explorateur complet",
   description: "Découvre 100% de la carte dans un niveau.",
-  game_id: game2.id,
+  game_id: game12.id,
   user_id: user4.id,
 });
 
 const challenge13 = await Challenge.create({
   name: "Course contre la montre",
   description: "Bats un boss en moins de 2 minutes.",
-  game_id: game3.id,
+  game_id: game1.id,
   user_id: user4.id,
 });
 
@@ -238,42 +262,42 @@ const challenge14 = await Challenge.create({
   name: "Aucun objet",
   description:
     "Termine une mission sans utiliser le moindre objet ou compétence spéciale.",
-  game_id: game4.id,
+  game_id: game2.id,
   user_id: user4.id,
 });
 
 const challenge15 = await Challenge.create({
   name: "Champion des défis",
   description: "Accomplis 5 défis secondaires en une seule partie.",
-  game_id: game5.id,
+  game_id: game3.id,
   user_id: user4.id,
 });
 
 const challenge16 = await Challenge.create({
   name: "Zigzag infernal",
   description: "Esquive 50 attaques ennemies sans te faire toucher.",
-  game_id: game6.id,
+  game_id: game4.id,
   user_id: user4.id,
 });
 
 const challenge17 = await Challenge.create({
   name: "Survivant ultime",
   description: "Survis à 10 vagues d’ennemis sans mourir ni te cacher.",
-  game_id: game7.id,
+  game_id: game5.id,
   user_id: user4.id,
 });
 
 const challenge18 = await Challenge.create({
   name: "Sans alarme",
   description: "Termine une mission d’infiltration sans déclencher d’alarme.",
-  game_id: game8.id,
+  game_id: game6.id,
   user_id: user4.id,
 });
 
 const challenge19 = await Challenge.create({
   name: "Coureur infatigable",
   description: "Parcours 10 km dans le jeu sans utiliser de véhicule ni repos.",
-  game_id: game9.id,
+  game_id: game7.id,
   user_id: user4.id,
 });
 
@@ -281,11 +305,11 @@ const challenge20 = await Challenge.create({
   name: "Maître stratège",
   description:
     "Remporte une mission difficile en solo sans pertes ni gaspillage de munitions.",
-  game_id: game10.id,
+  game_id: game8.id,
   user_id: user4.id,
 });
 
-// Link challenges to games
+// Link challenges to games using manual associations
 await challenge1.setGame(game1);
 await challenge2.setGame(game2);
 await challenge3.setGame(game3);
@@ -307,7 +331,7 @@ await challenge18.setGame(game6);
 await challenge19.setGame(game7);
 await challenge20.setGame(game8);
 
-// link user to challenges
+// Link users to challenges
 await user1.addChallenge(challenge1);
 await user1.addChallenge(challenge2);
 await user1.addChallenge(challenge3);
@@ -329,45 +353,47 @@ await user4.addChallenge(challenge18);
 await user4.addChallenge(challenge19);
 await user4.addChallenge(challenge20);
 
-// Participation creation
-const participation1 = await Participation.create({
-  title: "video 1",
-  url: "https://www.youtube.com/watch?v=lUhcwRuyEr4",
-});
-const participation2 = await Participation.create({
-  title: "video 2",
-  url: "https://www.youtube.com/watch?v=PicaaV-UpEQ",
-});
-const participation3 = await Participation.create({
-  title: "video 3",
-  url: "https://www.youtube.com/watch?v=QCxaK0I2ijU",
-});
-const participation4 = await Participation.create({
-  title: "video 4",
-  url: "https://www.youtube.com/watch?v=A3ozugTuAZU",
-});
+// Array to store all challenges for massive generation loop
+const challengesArray = [
+  challenge1, challenge2, challenge3, challenge4, challenge5,
+  challenge6, challenge7, challenge8, challenge9, challenge10,
+  challenge11, challenge12, challenge13, challenge14, challenge15,
+  challenge16, challenge17, challenge18, challenge19, challenge20
+];
 
-// link participation to challenges
-await participation1.setChallenge(challenge1);
-await participation2.setChallenge(challenge2);
-await participation3.setChallenge(challenge3);
-await participation4.setChallenge(challenge1)
+// Massive Participation creation with randomized votes to fix homepage logic
+console.log("🚀 Creating 12 participations for EACH challenge with varied scores...");
 
-// Vote added to challenges
-await user2.addVotedParticipations(participation2);
-await user3.addVotedParticipations([participation2, participation3]);
-await user1.addVotedParticipations([
-  participation1,
-  participation2,
-  participation3,
-]);
-await user4.addVotedParticipations(participation2);
+const videoSamples = [
+  "https://www.youtube.com/watch?v=lUhcwRuyEr4",
+  "https://www.youtube.com/watch?v=PicaaV-UpEQ",
+  "https://www.youtube.com/watch?v=QCxaK0I2ijU",
+  "https://www.youtube.com/watch?v=A3ozugTuAZU"
+];
 
-// link participation to users
-await participation1.setPlayer(user1);
-await participation2.setPlayer(user1);
-await participation3.setPlayer(user1);
-await participation4.setPlayer(user3);
+for (const challenge of challengesArray) {
+  for (let i = 1; i <= 12; i++) {
+    const baseUrl = videoSamples[i % videoSamples.length];
+    
+    // Create participation with unique URL to avoid UNIQUE constraint
+    const p = await Participation.create({
+      title: `Proof Video #${i} - ${challenge.name}`,
+      url: `${baseUrl}&t=${challenge.id}_${i}`,
+      challenge_id: challenge.id,
+      user_id: allUsers[i % allUsers.length].id
+    });
+    
+    // --- VOTE RANDOMIZATION LOGIC ---
+    // Distribute a random number of votes to each video so they are ranked differently
+    const randomVoteCount = Math.floor(Math.random() * (allUsers.length + 1));
+    if (randomVoteCount > 0) {
+      // Shuffle users and take a random slice
+      const shuffledVoters = [...allUsers].sort(() => 0.5 - Math.random());
+      const selectedVoters = shuffledVoters.slice(0, randomVoteCount);
+      await p.addVoters(selectedVoters);
+    }
+  }
+}
 
 console.log("✅ Insertion des données de seed terminée");
 await sequelize.close();

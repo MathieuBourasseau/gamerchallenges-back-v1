@@ -1,6 +1,7 @@
 import { User, Challenge, Participation, Game } from "../Models/index.js";
 
-export const userParticipationsController = {
+export const participationController = {
+
 	//  User's participations
 	async getParticipationsByUser(req, res) {
 		try {
@@ -38,4 +39,9 @@ export const userParticipationsController = {
 			res.status(500).json({ message: "Erreur serveur" });
 		}
 	},
+
+	// Get participations bound to a challenge 
+	getParticipationsByChallenge (req, res) {
+		
+	}
 };

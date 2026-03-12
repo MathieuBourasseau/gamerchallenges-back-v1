@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { userParticipationsController } from "../Controllers/userParticipations.controller.js";
+import { participationController } from "../Controllers/index.js";
+import { validId } from "../Middlewares/index.js";
 
-export const userParticipationsRouter = Router();
+export const participationRouter = Router();
 
-userParticipationsRouter.get(
-	"/users/:id/participations",
-	userParticipationsController.getParticipationsByUser,
-);
+// Route to get all participations bound to a challenge
+participationRouter.get("/challenges/:id/participations", validId, participationController.getParticipationsByChallenge)
+
+// Route to get all participations of a user 
+participationRouter.get("/users/:id/participations", validId, participationController.getParticipationsByUser);

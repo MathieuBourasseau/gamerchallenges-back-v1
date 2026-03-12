@@ -41,14 +41,31 @@ export const participationController = {
 	},
 
 	// Get participations bound to a challenge 
-	getParticipationsByChallenge (req, res) {
+	async getParticipationsByChallenge(req, res) {
 
-		// Catch id from params
-		const { id } = req.params;
-		// Check that a challenge with this is id existing in DB
-		// If not send back an error message 
-		// Create the sequelize request to get participations
+		try {
 
+			// Catch id from params
+			const { id } = req.params;
 
+			// Search challenge and participation bound to it
+			const challenge = await Challenge.findByPk(id, {
+				include: "participations"
+			});
+
+			// If the challenge does not exist 
+			if (!challenge) {
+				console.error("L'id du challenge demandé n'existe pas.")
+				return res.status(404).json({ error: "Le challenge demandé n'existe pas." })
+			};
+
+			return res.status(200).json(challenge)
+
+		} catch (error) {
+
+			console.error("Erreur de serveur lors de la recherche d'une participation à un challenge", error.message);
+			return res.status(500).json({ error: "Un problème est survenu avec le serveur."});
+
+		}
 	}
 };

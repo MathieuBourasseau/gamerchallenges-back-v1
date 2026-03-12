@@ -22,6 +22,20 @@ export const userController = {
 	//   }
 	// },
 
+	// All users list
+	async getAllUsers(req, res) {
+		try {
+			const users = await User.findAll({
+				attributes: ["id", "username", "avatar"],
+			});
+
+			res.json(users);
+		} catch (error) {
+			console.error(error);
+			res.status(500).json({ message: "Erreur serveur" });
+		}
+	},
+
 	//  get all user infos
 	async getUserById(req, res) {
 		try {

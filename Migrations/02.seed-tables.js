@@ -332,7 +332,7 @@ await user4.addChallenge(challenge20);
 // Participation creation
 const participation1 = await Participation.create({
   title: "video 1",
-  url: "https://www.youtube.com/watch?v=EfG2Evfgp2o",
+  url: "https://www.youtube.com/watch?v=lUhcwRuyEr4",
 });
 const participation2 = await Participation.create({
   title: "video 2",
@@ -342,11 +342,16 @@ const participation3 = await Participation.create({
   title: "video 3",
   url: "https://www.youtube.com/watch?v=QCxaK0I2ijU",
 });
+const participation4 = await Participation.create({
+  title: "video 4",
+  url: "https://www.youtube.com/watch?v=A3ozugTuAZU",
+});
 
 // link participation to challenges
 await participation1.setChallenge(challenge1);
 await participation2.setChallenge(challenge2);
 await participation3.setChallenge(challenge3);
+await participation4.setChallenge(challenge1)
 
 // Vote added to challenges
 await user2.addVotedParticipations(participation2);

@@ -1,7 +1,7 @@
 import { User, Challenge, Participation, Game } from "../Models/index.js";
 
 export const userParticipationsController = {
-	//  les participations d’un user
+	//  User's participations
 	async getParticipationsByUser(req, res) {
 		try {
 			const { id } = req.params;

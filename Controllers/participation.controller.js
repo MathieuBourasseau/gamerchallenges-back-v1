@@ -42,6 +42,13 @@ export const participationController = {
 
 	// Get participations bound to a challenge 
 	getParticipationsByChallenge (req, res) {
-		
+
+		// Catch id from params
+		const { id } = req.params;
+		// Check that a challenge with this is id existing in DB
+		// If not send back an error message 
+		// Create the sequelize request to get participations
+
+
 	}
 };

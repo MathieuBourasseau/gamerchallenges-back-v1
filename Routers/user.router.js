@@ -5,6 +5,7 @@ import avatarUpload from "../Middlewares/uploadAvatar.middleware.js";
 
 export const userRouter = Router();
 
+userRouter.get("/users", userController.getAllUsers);
 userRouter.get("/users/:id", userController.getUserById);
 userRouter.delete("/users/:id", userController.deleteUser);
 userRouter.patch(

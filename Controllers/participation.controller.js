@@ -50,7 +50,18 @@ export const participationController = {
 
 			// Search challenge and participation bound to it
 			const challenge = await Challenge.findByPk(id, {
-				include: "participations"
+
+				include: {
+					model: Participation,
+					as: "participations",
+
+					// To show in front the username and avatar of the player
+					include: {
+						model: User,
+						as: "player",
+						attributes: ["id", "username", "avatar"]
+					}
+				}
 			});
 
 			// If the challenge does not exist 

@@ -93,13 +93,12 @@ export const participationController = {
 			const participation = await Participation.create({
 				title,
 				url,
-				user_id,
+				// user_id
 			});
 
 			return res.status(201).json({ message: "Votre vidéo a été ajoutée ! " })
 
 		} catch (error) {
-
 			console.error("Erreur lors du partage de la participation", error.message);
 			return res.status(500).json({ error: "Une erreur interne au serveur s'est produite. Veuillez réessayer ultérieurement." })
 		}

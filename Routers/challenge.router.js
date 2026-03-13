@@ -6,8 +6,4 @@ export const challengeRouter = Router();
 
 challengeRouter.get("/challenges", challengeController.getAllChallenges);
 
-challengeRouter.get(
-  "/challenges/:id",
-  validId,
-  challengeController.getOneChallenge,
-);
+challengeRouter.get("/challenges/:id", validId, challengeController.getChallengeById);

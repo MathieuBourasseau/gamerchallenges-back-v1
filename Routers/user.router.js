@@ -19,6 +19,7 @@ userRouter.post("/users/login", authenticationUserController.login);
 
 userRouter.get("/me", authenticate, authenticationUserController.getMe);
 
+userRouter.get("/users", userController.getAllUsers);
 userRouter.get("/users/:id", userController.getUserById);
 userRouter.delete("/users/:id", userController.deleteUser);
 

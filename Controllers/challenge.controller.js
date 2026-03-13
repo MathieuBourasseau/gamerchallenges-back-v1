@@ -33,27 +33,60 @@ export const challengeController = {
     }
   },
 
-  //  --- METHOD TO GET A CHALLENGE BY ITS ID ---
-  async getOneChallenge(req, res) {
-    try {
-      // Get id from params
-      const { id } = req.params;
+	//  --- METHOD TO GET A CHALLENGE BY ITS ID ---
+	async getChallengeById(req, res) {
 
-      // Check if the challenge is existing in DB
-      const challenge = await Challenge.findByPk(id, {
-        include: [
-          {
-            model: Game,
-            as: "game",
-            attributes: ["id", "cover"], // Get image bounded to the game
-          },
-          {
-            model: User,
-            as: "creator",
-            attributes: ["id", "username"], // Get the creator that posted the challenge
-          },
-        ],
-      });
+		try {
+
+			// Get id from params
+			const { id } = req.params;
+
+			// Check if the challenge is existing in DB
+			const challenge = await Challenge.findByPk(id, {
+
+				attributes: {
+					// Calculate the sum of votes received in each participations and save the result in a new column of Challenge named "voteCounted"
+					include: [
+						[fn("COUNT", col("participations->voters.id")), "voteCounted"]
+					],
+				},
+
+				include: [
+					// Include Game model to get the image associated
+					{
+						model: Game,
+						as: "game",
+						attributes: ["id", "cover"]
+					},
+					// Include Participation model to get videos participations associated to it
+					{
+						model: Participation,
+						as: "participations",
+						attributes: ["id", "url"],
+
+						// Include User model to get the voters on each participation
+						include: [
+							{
+								model: User,
+								as: "voters",
+								attributes: [],
+								through: { attributes: [] }
+							}
+						]
+					}
+				],
+				// Group by these IDs to ensure the COUNT function calculates the total 
+				// without merging all participations or game info into a single row.
+				group: [
+					"Challenge.id",      // Keep the main challenge unique
+					"game.id",           // Keep associated game info linked
+					"participations.id"  // Prevent the list of participation videos from being collapsed
+				],
+
+				// Disable subqueries to allow the COUNT function to access 
+				// the joined tables (Participations -> Voters) directly.
+				subQuery: false
+			});
 
       // Error message sent if the challenge does not exist
       if (!challenge) {

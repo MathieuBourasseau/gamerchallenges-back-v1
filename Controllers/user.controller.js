@@ -2,116 +2,168 @@ import { User } from "../Models/index.js";
 import argon2 from "argon2";
 
 export const userController = {
-	// modèle Blablabook pouvant servir pour la partie register/login
-	// async createUser(req, res) {
-	//   try {
-	//     const data = Joi.attempt(req.body, createUserSchema);
-	//     const user = await User.create(data);
-	//     res.status(201).json(user);
-	//   } catch (error) {
-	//     console.error(error);
-	//     res.status(500).json({ error: "Erreur lors de la création de l'utilisateur" });
-	//   }
-	// },
+  // modèle Blablabook pouvant servir pour la partie register/login
+  // async createUser(req, res) {
+  //   try {
+  //     const data = Joi.attempt(req.body, createUserSchema);
+  //     const user = await User.create(data);
+  //     res.status(201).json(user);
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ error: "Erreur lors de la création de l'utilisateur" });
+  //   }
+  // },
 
-	// async loginUser(req, res) {
-	//   const { username, email, password } = req.body;
-	//   const user = await User.findOne({ where: { username: username } });
-	//   if (!user || user.password !== password) {
-	//     return res.status(401).json({ error: 'Utilisateur non valide' });
-	//   }
-	// },
+  // async loginUser(req, res) {
+  //   const { username, email, password } = req.body;
+  //   const user = await User.findOne({ where: { username: username } });
+  //   if (!user || user.password !== password) {
+  //     return res.status(401).json({ error: 'Utilisateur non valide' });
+  //   }
+  // },
 
-	// All users list
-	async getAllUsers(req, res) {
-		try {
-			const users = await User.findAll({
-				attributes: ["id", "username", "avatar"],
-			});
+  // Since we now have a dedicated authentication controller, the existing methods in this controller
+  // are considered admin-level operations.
+  // Below are the new methods allowing a regular user to manage their own account via /me routes.
 
-			res.json(users);
-		} catch (error) {
-			console.error(error);
-			res.status(500).json({ message: "Erreur serveur" });
-		}
-	},
+  async updateMe(req, res) {
+    try {
+      const { id } = req.user; // Assuming the user ID is stored in req.user after authentication
+      const user = await User.findByPk(id);
+      if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+      }
 
-	//  get all user infos
-	async getUserById(req, res) {
-		try {
-			const { id } = req.params;
-			const user = await User.findByPk(id, {
-				attributes: [
-					"id",
-					"username",
-					"email",
-					"avatar",
-					"favouriteGame",
-					"twitch",
-					"youtube",
-					"discord",
-				],
-			});
-			if (!user) {
-				return res.status(404).json({ message: "User non trouvé" });
-			}
-			res.json(user);
-		} catch (error) {
-			console.error(error);
-			res.status(500).json({ message: "Erreur serveur" });
-		}
-	},
+      const validatedData = { ...req.body };
 
-	async deleteUser(req, res) {
-		try {
-			const { id } = req.params;
+      if (req.file) {
+        validatedData.avatar = req.file.path;
+      }
 
-			const deletedCount = await User.destroy({ where: { id } });
+      if (validatedData.password) {
+        validatedData.password = await argon2.hash(validatedData.password);
+      }
 
-			if (deletedCount === 0) {
-				return res.status(404).json({ error: "Utilisateur non trouvé" });
-			}
+      await user.update(validatedData);
 
-			return res.status(200).json({ message: "Compte supprimé avec succès" });
-		} catch (error) {
-			console.error(error);
-			return res.status(500).json({
-				error: "Une erreur est survenue lors de la suppression du compte",
-			});
-		}
-	},
+      res.status(200).json({ user });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "Erreur lors de la modification des informations" });
+    }
+  },
 
-	// ⚠️ method to complete with security before validating changes in "mon compte", according to the auth method
-	async editUserAccount(req, res) {
-		try {
-			const { id } = req.params;
+  // Delete his own account :
 
-			if (!id) {
-				return res.status(400).json({ error: "L'ID utilisateur est requis" });
-			}
+  async deleteMe(req, res) {
+    try {
+      const userId = req.user.id;
+      const deletedCount = await User.destroy({ where: { id: userId } });
 
-			const user = await User.findByPk(id);
-			if (!user)
-				return res.status(404).json({ error: "Utilisateur non trouvé" });
+      if (deletedCount === 0) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+      }
 
-			const validatedData = { ...req.body };
+      return res.status(200).json({ message: "Compte supprimé avec succès" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        error: "Une erreur est survenue lors de la suppression du compte",
+      });
+    }
+  },
+  // All users list
+  async getAllUsers(req, res) {
+    try {
+      const users = await User.findAll({
+        attributes: ["id", "username", "avatar"],
+      });
 
-			if (req.file) {
-				validatedData.avatar = req.file.path;
-			}
+      res.json(users);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  },
 
-			if (validatedData.password) {
-				validatedData.password = await argon2.hash(validatedData.password);
-			}
+  //  get all user infos
+  async getUserById(req, res) {
+    try {
+      const { id } = req.params;
+      const user = await User.findByPk(id, {
+        attributes: [
+          "id",
+          "username",
+          "email",
+          "avatar",
+          "favouriteGame",
+          "twitch",
+          "youtube",
+          "discord",
+        ],
+      });
+      if (!user) {
+        return res.status(404).json({ message: "User non trouvé" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  },
 
-			await user.update(validatedData);
+  async deleteUser(req, res) {
+    try {
+      const { id } = req.params;
 
-			res.status(200).json({ user });
-		} catch (error) {
-			console.error(error);
-			res
-				.status(500)
-				.json({ error: "Erreur lors de la modification des informations" });
-		}
-	},
+      const deletedCount = await User.destroy({ where: { id } });
+
+      if (deletedCount === 0) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+      }
+
+      return res.status(200).json({ message: "Compte supprimé avec succès" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        error: "Une erreur est survenue lors de la suppression du compte",
+      });
+    }
+  },
+
+  // ⚠️ method to complete with security before validating changes in "mon compte", according to the auth method
+  async editUserAccount(req, res) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res.status(400).json({ error: "L'ID utilisateur est requis" });
+      }
+
+      const user = await User.findByPk(id);
+      if (!user)
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+
+      const validatedData = { ...req.body };
+
+      if (req.file) {
+        validatedData.avatar = req.file.path;
+      }
+
+      if (validatedData.password) {
+        validatedData.password = await argon2.hash(validatedData.password);
+      }
+
+      await user.update(validatedData);
+
+      res.status(200).json({ user });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "Erreur lors de la modification des informations" });
+    }
+  },
 };

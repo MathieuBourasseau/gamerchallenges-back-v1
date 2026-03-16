@@ -13,7 +13,7 @@ Participation.init(
 
       url: {
          type: DataTypes.TEXT,
-         allowNull: true,
+         allowNull: false,
          unique: true,
       },
    },

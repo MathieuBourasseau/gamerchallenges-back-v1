@@ -75,8 +75,33 @@ export const participationController = {
 		} catch (error) {
 
 			console.error("Erreur de serveur lors de la recherche d'une participation à un challenge", error.message);
-			return res.status(500).json({ error: "Un problème est survenu avec le serveur."});
+			return res.status(500).json({ error: "Un problème est survenu avec le serveur." });
 
 		}
+	},
+
+	// Share participation with url
+	async shareParticipation(req, res) {
+
+		try {
+
+			// Catch user id from request
+			// const user_id = req.user
+
+			const { title, url } = req.body;
+
+			const participation = await Participation.create({
+				title,
+				url,
+				// user_id
+			});
+
+			return res.status(201).json({ message: "Votre vidéo a été ajoutée ! " })
+
+		} catch (error) {
+			console.error("Erreur lors du partage de la participation", error.message);
+			return res.status(500).json({ error: "Une erreur interne au serveur s'est produite. Veuillez réessayer ultérieurement." })
+		}
 	}
-};
+
+}

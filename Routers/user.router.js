@@ -14,17 +14,23 @@ userRouter.post(
   avatarUpload.single("avatar"),
   authenticationUserController.register,
 );
-
 userRouter.post("/users/login", authenticationUserController.login);
 
 userRouter.get("/me", authenticate, authenticationUserController.getMe);
-
-userRouter.get("/users", userController.getAllUsers);
-userRouter.get("/users/:id", userController.getUserById);
-userRouter.delete("/users/:id", userController.deleteUser);
-
 userRouter.patch(
-  "/users/:id",
+  "/me",
+  authenticate,
   avatarUpload.single("avatar"),
-  userController.editUserAccount,
+  userController.updateMe,
 );
+userRouter.delete("/me", authenticate, userController.deleteMe);
+
+// userRouter.get("/users", userController.getAllUsers);
+// userRouter.get("/users/:id", userController.getUserById);
+// userRouter.delete("/users/:id", userController.deleteUser);
+
+// userRouter.patch(
+//   "/users/:id",
+//   avatarUpload.single("avatar"),
+//   userController.editUserAccount,
+// ); these routes are made for the admin side to scale up the project

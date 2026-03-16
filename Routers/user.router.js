@@ -23,6 +23,17 @@ userRouter.patch(
   avatarUpload.single("avatar"),
   userController.updateMe,
 );
+userRouter.patch(
+  "/me",
+  authenticate,
+  avatarUpload.single("avatar"),
+  userController.updateMe,
+);
+userRouter.patch(
+  "/me/change-password",
+  authenticate,
+  userController.changePassword,
+);
 userRouter.delete("/me", authenticate, userController.deleteMe);
 
 // userRouter.get("/users", userController.getAllUsers);

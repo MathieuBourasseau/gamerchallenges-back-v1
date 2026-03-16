@@ -2,26 +2,6 @@ import { User } from "../Models/index.js";
 import argon2 from "argon2";
 
 export const userController = {
-  // modèle Blablabook pouvant servir pour la partie register/login
-  // async createUser(req, res) {
-  //   try {
-  //     const data = Joi.attempt(req.body, createUserSchema);
-  //     const user = await User.create(data);
-  //     res.status(201).json(user);
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(500).json({ error: "Erreur lors de la création de l'utilisateur" });
-  //   }
-  // },
-
-  // async loginUser(req, res) {
-  //   const { username, email, password } = req.body;
-  //   const user = await User.findOne({ where: { username: username } });
-  //   if (!user || user.password !== password) {
-  //     return res.status(401).json({ error: 'Utilisateur non valide' });
-  //   }
-  // },
-
   // Since we now have a dedicated authentication controller, the existing methods in this controller
   // are considered admin-level operations.
   // Below are the new methods allowing a regular user to manage their own account via /me routes.
@@ -66,6 +46,36 @@ export const userController = {
     } catch (error) {
       console.error("updateMe error:", error);
       res.status(500).json({ error: "Error updating user" });
+    }
+  },
+
+  // Change his own password :
+  async changePassword(req, res) {
+    try {
+      const userId = req.user.id;
+      const { oldPassword, newPassword } = req.body;
+
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Verify old password
+      const isMatch = await argon2.verify(user.password, oldPassword);
+      if (!isMatch) {
+        return res.status(400).json({ error: "Old password is incorrect" });
+      }
+
+      // Hash new password
+      const hashedPassword = await argon2.hash(newPassword);
+
+      // Update user password
+      await user.update({ password: hashedPassword });
+
+      res.status(200).json({ message: "Password updated successfully" });
+    } catch (error) {
+      console.error("changePassword error:", error);
+      res.status(500).json({ error: "Error changing password" });
     }
   },
 

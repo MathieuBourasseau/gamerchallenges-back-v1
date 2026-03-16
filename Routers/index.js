@@ -7,6 +7,7 @@ import { contactRouter } from "./contact.router.js";
 import { rankingRouter } from "./ranking.router.js";
 import { participationRouter } from "./participation.router.js";
 import { searchRouter } from "./search.router.js";
+import { userVotesRouter } from "./userVotes.routes.js";
 
 export const apiRouter = Router();
 
@@ -18,3 +19,4 @@ apiRouter.use(userRouter);
 apiRouter.use(contactRouter);
 apiRouter.use(rankingRouter);
 apiRouter.use(participationRouter);
+apiRouter.use(userVotesRouter);

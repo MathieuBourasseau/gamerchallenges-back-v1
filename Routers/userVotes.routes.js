@@ -1,27 +1,26 @@
 import { Router } from "express";
-import { userVotesController } from "./userVotes.controller.js";
-import { authenticate } from "../middlewares/authenticate.middleware.js";
+import { userVotesController } from "../Controllers/userVotes.controller.js";
+import { authenticate } from "../Middlewares/authenticate.middleware.js";
 
 export const userVotesRouter = Router();
 
 // Add a vote
-router.post(
+userVotesRouter.post(
 	"/participations/:participationId/vote",
 	authenticate,
 	userVotesController.addVote,
 );
 
 // Remove a vote
-router.delete(
+userVotesRouter.delete(
 	"/participations/:participationId/vote",
 	authenticate,
 	userVotesController.removeVote,
 );
 
 // Check if user already voted
-router.get(
+userVotesRouter.get(
 	"/participations/:participationId/vote",
 	authenticate,
 	userVotesController.checkVote,
 );
-

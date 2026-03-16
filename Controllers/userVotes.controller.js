@@ -1,4 +1,4 @@
-import { User, Participation } from "../models/index.js";
+import { User, Participation } from "../Models/index.js";
 
 export const userVotesController = {
 	// Vote for a participation

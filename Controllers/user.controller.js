@@ -28,30 +28,44 @@ export const userController = {
 
   async updateMe(req, res) {
     try {
-      const { id } = req.user; // Assuming the user ID is stored in req.user after authentication
-      const user = await User.findByPk(id);
+      const userId = req.user.id;
+
+      // Fetch user
+      const user = await User.findByPk(userId);
       if (!user) {
-        return res.status(404).json({ error: "Utilisateur non trouvé" });
+        return res.status(404).json({ error: "User not found" });
       }
 
+      // Clone request body
       const validatedData = { ...req.body };
 
+      // If avatar uploaded → store RELATIVE path
       if (req.file) {
-        validatedData.avatar = req.file.path;
+        validatedData.avatar = `uploads/avatars/${req.file.filename}`;
       }
 
+      // Hash password if updated
       if (validatedData.password) {
         validatedData.password = await argon2.hash(validatedData.password);
       }
 
+      // Update user
       await user.update(validatedData);
 
-      res.status(200).json({ user });
+      // Build public avatar URL
+      let avatarUrl = null;
+      if (user.avatar) {
+        avatarUrl = `${req.protocol}://${req.get("host")}/${user.avatar}`;
+      }
+
+      // Return updated user with full avatar URL
+      res.status(200).json({
+        ...user.toJSON(),
+        avatar: avatarUrl,
+      });
     } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "Erreur lors de la modification des informations" });
+      console.error("updateMe error:", error);
+      res.status(500).json({ error: "Error updating user" });
     }
   },
 

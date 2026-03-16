@@ -85,15 +85,14 @@ export const participationController = {
 
 		try {
 
-			// Catch user id from request
-			// const user_id = req.user
+			const { id } = req.user
 
 			const { title, url } = req.body;
 
 			const participation = await Participation.create({
 				title,
 				url,
-				// user_id
+				user_id: id,
 			});
 
 			return res.status(201).json({ message: "Votre vidéo a été ajoutée ! " })

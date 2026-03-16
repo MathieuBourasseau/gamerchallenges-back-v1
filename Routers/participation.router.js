@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { participationController } from "../Controllers/index.js";
 import { validId } from "../Middlewares/index.js";
-import { validParticipation } from "../Middlewares/index.js";
+import { validParticipation, authenticate } from "../Middlewares/index.js";
 
 export const participationRouter = Router();
 
 // Route to share a participation from YouTube
-participationRouter.post("/participations/share", validParticipation, participationController.shareParticipation)
+participationRouter.post("/participations/share", authenticate, validParticipation, participationController.shareParticipation)
 
 // Route to get all participations bound to a challenge
 participationRouter.get("/challenges/:id/participations", validId, participationController.getParticipationsByChallenge)

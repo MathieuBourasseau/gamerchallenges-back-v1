@@ -32,7 +32,7 @@ export const challengeController = {
     } catch (error) {
       console.error(error);
       res.status(httpStatusCodes.SERVER_ERROR).json({
-        statusCode: httpStatusCodes.SERVER_ERROR,
+        status: httpStatusCodes.SERVER_ERROR,
         message: responseMessages[httpStatusCodes.SERVER_ERROR],
       });
     }
@@ -99,7 +99,7 @@ export const challengeController = {
         return res
           .status(httpStatusCodes.NOT_FOUND)
           .json({ 
-            statusCode: httpStatusCodes.NOT_FOUND,
+            status: httpStatusCodes.NOT_FOUND,
             error: responseMessages[httpStatusCodes.NOT_FOUND]
           });
       }
@@ -110,7 +110,7 @@ export const challengeController = {
     } catch (error) {
       console.error("Erreur lors de la recherche du challenge", error.message);
       res.status(httpStatusCodes.SERVER_ERROR).json({
-        statusCode: httpStatusCodes.SERVER_ERROR,
+        status: httpStatusCodes.SERVER_ERROR,
         message: responseMessages[httpStatusCodes.SERVER_ERROR],
       });
     }
@@ -124,7 +124,7 @@ export const challengeController = {
       const user = await User.findByPk(id);
       if (!user) {
         return res.status(httpStatusCodes.NOT_FOUND).json({ 
-          statusCode: httpStatusCodes.NOT_FOUND,
+          status: httpStatusCodes.NOT_FOUND,
           message: responseMessages[httpStatusCodes.NOT_FOUND]
          });
       }
@@ -141,11 +141,11 @@ export const challengeController = {
       });
 
       res.status(httpStatusCodes.OK).json(userChallenges);
-      
+
     } catch (error) {
       console.error(error);
       res.status(httpStatusCodes.SERVER_ERROR).json({
-        statusCode: httpStatusCodes.SERVER_ERROR,
+        status: httpStatusCodes.SERVER_ERROR,
         message: responseMessages[httpStatusCodes.SERVER_ERROR],
       });
     }

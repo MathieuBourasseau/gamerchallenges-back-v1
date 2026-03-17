@@ -170,6 +170,7 @@ export const authenticationUserController = {
 
       // Return user with full avatar URL
       res.status(httpStatusCodes.OK).json({
+        status: httpStatusCodes.OK,
         ...user.toJSON(),
         avatar: avatarUrl,
       });

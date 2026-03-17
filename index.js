@@ -22,5 +22,5 @@ app.use("/uploads", express.static("uploads"));
 app.use(apiRouter);
 
 app.listen(PORT, () => {
-  console.log(`GamerChallenges is "streaming" 🎮 on http://localhost:${PORT}`);
+	console.log(`GamerChallenges is "streaming" 🎮 on http://localhost:${PORT}`);
 });

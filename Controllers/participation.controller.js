@@ -1,4 +1,5 @@
 import { User, Challenge, Participation, Game } from "../Models/index.js";
+import { fn, col } from "sequelize";
 
 export const participationController = {
 	//  User's participations
@@ -50,14 +51,33 @@ export const participationController = {
 				include: {
 					model: Participation,
 					as: "participations",
-
-					// To show in front the username and avatar of the player
-					include: {
-						model: User,
-						as: "player",
-						attributes: ["id", "username", "avatar"],
-					},
+					attributes: [
+						"id",
+						"url",
+						// Calculate the vote count per participation
+						[fn("COUNT", col("participations->voters.id")), "voteCounted"],
+					],
+					include: [
+						{
+							model: User,
+							as: "voters",
+							attributes: [],
+							through: { attributes: [] },
+						},
+						// To show in front the username and avatar of the player
+						{
+							model: User,
+							as: "player",
+							attributes: ["id", "username", "avatar"],
+						},
+					],
 				},
+				group: [
+					"Challenge.id",
+					"participations.id",
+					"participations->player.id",
+				],
+				subQuery: false,
 			});
 
 			// If the challenge does not exist
@@ -99,12 +119,10 @@ export const participationController = {
 				"Erreur lors du partage de la participation",
 				error.message,
 			);
-			return res
-				.status(500)
-				.json({
-					error:
-						"Une erreur interne au serveur s'est produite. Veuillez réessayer ultérieurement.",
-				});
+			return res.status(500).json({
+				error:
+					"Une erreur interne au serveur s'est produite. Veuillez réessayer ultérieurement.",
+			});
 		}
 	},
 };

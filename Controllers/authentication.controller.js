@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { User } from "../Models/index.js";
 import { loginUserSchema } from "../Schemas/index.js";
 import { registerUserSchema } from "../Schemas/index.js";
+import { httpStatusCodes, responseMessages } from "../utils/http-status-code.js";
 
 export const authenticationUserController = {
   // =========================================================
@@ -19,15 +20,19 @@ export const authenticationUserController = {
 
       // Ensure the user accepted the privacy policy (GDPR compliance)
       if (!acceptPolicy) {
-        return res.status(400).json({
-          error: "You must accept the privacy policy.",
+        return res.status(httpStatusCodes.BAD_REQUEST).json({
+          status: responseMessages[httpStatusCodes.BAD_REQUEST],
+          error: "Vous devez accepter la politique de traitement des données.",
         });
       }
 
       // Check if an account already exists with this email
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
-        return res.status(409).json({ error: "Email already in use." });
+        return res.status(httpStatusCodes.CONFLICT).json({
+          status: httpStatusCodes.CONFLICT,
+          error: "Cet email existe déjà." 
+        });
       }
 
       // Hash the password securely using Argon2
@@ -53,8 +58,8 @@ export const authenticationUserController = {
       );
 
       // Send response back to the client
-      return res.status(201).json({
-        message: "Account successfully created",
+      return res.status(httpStatusCodes.CREATED).json({
+        message: "Création du compte réussie",
         token,
         user: {
           id: newUser.id,
@@ -66,7 +71,10 @@ export const authenticationUserController = {
       });
     } catch (error) {
       console.error("Register error:", error);
-      res.status(500).json({ error: "Server error" });
+      res.status(httpStatusCodes.SERVER_ERROR).json({ 
+        status: httpStatusCodes.SERVER_ERROR,
+        error: responseMessages[httpStatusCodes.SERVER_ERROR]
+      });
     }
   },
 
@@ -81,13 +89,18 @@ export const authenticationUserController = {
       // Look for a user with this email
       const user = await User.findOne({ where: { email } });
       if (!user) {
-        return res.status(404).json({ error: "User does not exist" });
+        return res.status(httpStatusCodes.NOT_FOUND).json({ 
+          status: httpStatusCodes.NOT_FOUND,
+          error: "Cet utilisateur n'existe pas." 
+        });
       }
 
       // Verify the password using Argon2
       const isPasswordValid = await argon2.verify(user.password, password);
       if (!isPasswordValid) {
-        return res.status(403).json({ error: "Incorrect password" });
+        return res.status(httpStatusCodes.FORBIDDEN).json({ 
+          status: httpStatusCodes.FORBIDDEN,
+          error: "Mot de passe incorrect" });
       }
 
       // Generate a JWT
@@ -102,8 +115,8 @@ export const authenticationUserController = {
       );
 
       // Send response back to the client
-      res.status(200).json({
-        message: "User successfully logged in",
+      res.status(httpStatusCodes.OK).json({
+        message: "Connexion de l'utilisateur réussie",
         token,
         user: {
           id: user.id,
@@ -115,7 +128,10 @@ export const authenticationUserController = {
       });
     } catch (error) {
       console.error("Login error:", error);
-      res.status(500).json({ error: "Server error" });
+      res.status(httpStatusCodes.SERVER_ERROR).json({ 
+        status: httpStatusCodes.SERVER_ERROR,
+        error: responseMessages[httpStatusCodes.SERVER_ERROR] 
+      });
     }
   },
 
@@ -141,7 +157,9 @@ export const authenticationUserController = {
       });
 
       if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        return res.status(httpStatusCodes.NOT_FOUND).json({ 
+          status: httpStatusCodes.NOT_FOUND,
+          error: "Cet utilisateur n'existe pas." });
       }
 
       // Build public avatar URL
@@ -151,13 +169,16 @@ export const authenticationUserController = {
       }
 
       // Return user with full avatar URL
-      res.status(200).json({
+      res.status(httpStatusCodes.OK).json({
+        status: httpStatusCodes.OK,
         ...user.toJSON(),
         avatar: avatarUrl,
       });
     } catch (error) {
       console.error("getMe error:", error);
-      res.status(500).json({ error: "Server error" });
+      res.status(httpStatusCodes.SERVER_ERROR).json({ 
+        status: httpStatusCodes.SERVER_ERROR,
+        error: responseMessages[httpStatusCodes.SERVER_ERROR] });
     }
   },
 };

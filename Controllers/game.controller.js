@@ -26,9 +26,7 @@ export const gameController = {
 			});
 		} catch (error) {
 			console.error("Erreur Sequelize :", error);
-			res
-				.status(httpStatusCodes.SERVER_ERROR)
-				.json({
+			res.status(httpStatusCodes.SERVER_ERROR).json({
 					status: responseMessages[httpStatusCodes.SERVER_ERROR],
 					error: "Erreur lors de la récupération des jeux"
 				});
@@ -38,7 +36,7 @@ export const gameController = {
 	async getGameById(req, res) {
 		
 		try {
-			
+
 			const game = await Game.findByPk(req.params.id, {
 				include: [
 					{

@@ -6,6 +6,7 @@ import {
 	sequelize,
 } from "../Models/index.js";
 import { fn, col, Op } from "sequelize";
+import { httpStatusCodes, responseMessages } from "../utils/http-status-code.js";
 
 export const challengeController = {
 	async getAllChallenges(req, res) {
@@ -122,10 +123,14 @@ export const challengeController = {
 				],
 			});
 
-			res.json(userChallenges);
-		} catch (error) {
-			console.error(error);
-			res.status(500).json({ message: "Erreur serveur" });
-		}
-	},
+      res.status(httpStatusCodes.OK).json(userChallenges);
+
+    } catch (error) {
+      console.error(error);
+      res.status(httpStatusCodes.SERVER_ERROR).json({
+        status: httpStatusCodes.SERVER_ERROR,
+        message: responseMessages[httpStatusCodes.SERVER_ERROR],
+      });
+    }
+  },
 };

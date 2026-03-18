@@ -1,5 +1,6 @@
 import { Op } from "sequelize";
 import { Game, User, Challenge } from "../Models/index.js";
+import { httpStatusCodes, responseMessages } from "../utils/http-status-code.js";
 
 export const searchController = {
   async search(req, res) {
@@ -8,7 +9,7 @@ export const searchController = {
 
       // Validate query (minimum length)
       if (!query || query.length < 2) {
-        return res.json([]);
+        return res.status(httpStatusCodes.OK).json([]);
       }
 
       // Prepare search in Games
@@ -45,7 +46,7 @@ export const searchController = {
         ]);
 
         // Merge results and tag each item with its type
-        return res.json([
+        return res.status(httpStatusCodes.OK).json([
           ...games.map((g) => ({ ...g.toJSON(), type: "game" })),
           ...users.map((u) => ({ ...u.toJSON(), type: "user" })),
           ...challenges.map((c) => ({ ...c.toJSON(), type: "challenge" })),
@@ -55,26 +56,35 @@ export const searchController = {
       // Search only in Games
       if (type === "games") {
         const games = await searchGames;
-        return res.json(games);
+        return res.status(httpStatusCodes.OK).json(games);
       }
 
       // Search only in Users
       if (type === "users") {
         const users = await searchUsers;
-        return res.json(users);
+        return res.status(httpStatusCodes.OK).json(users);
       }
 
       // Search only in Challenges
       if (type === "challenges") {
         const challenges = await searchChallenges;
-        return res.json(challenges);
+        return res.status(httpStatusCodes.OK).json(challenges);
       }
 
-      // Invalid search type
-      return res.status(400).json({ error: "Invalid search type" });
+      // Invalid search type (Erreur 400)
+      return res.status(httpStatusCodes.BAD_REQUEST).json({ 
+        status: httpStatusCodes.BAD_REQUEST,
+        error: "Type de recherche invalide." 
+      });
+
     } catch (error) {
-      console.error("Search error:", error);
-      res.status(500).json({ error: "Server error" });
+      console.error("Erreur lors de la recherche :", error);
+      
+      // Erreur 500 standardisée
+      return res.status(httpStatusCodes.SERVER_ERROR).json({ 
+        status: httpStatusCodes.SERVER_ERROR,
+        error: responseMessages[httpStatusCodes.SERVER_ERROR] 
+      });
     }
   },
 };

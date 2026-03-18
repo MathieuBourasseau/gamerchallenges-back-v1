@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import "dotenv/config";
-import { httpStatusCodes, responseMessages } from "../utils/http-status-code";
+import { httpStatusCodes, responseMessages } from "../utils/http-status-code.js";
+
 
 // Create transporter to specify to nodemailer which service will be used and how to connect with it
 

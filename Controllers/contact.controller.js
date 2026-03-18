@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import "dotenv/config";
+import { httpStatusCodes, responseMessages } from "../utils/http-status-code";
 
 // Create transporter to specify to nodemailer which service will be used and how to connect with it
 
@@ -36,15 +37,15 @@ export const contactController = {
       // Send to google all mail options
       await transporter.sendMail(mailOptions);
       return res
-        .status(200)
+        .status(httpStatusCodes.OK)
         .json({ message: "Votre message a été envoyé avec succès." });
     } catch (error) {
       // Return an error to the front if something is wrong
       console.error("Erreur Nodemailer :", error);
       return res
-        .status(500)
+        .status(httpStatusCodes.SERVER_ERROR)
         .json({
-          error: "Le service d'envoi de mail est momentanément indisponible.",
+          error: responseMessages[httpStatusCodes.SERVER_ERROR],
         });
     }
   },

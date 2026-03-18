@@ -1,106 +1,125 @@
 import { User, Challenge, Participation, Game } from "../Models/index.js";
+import { httpStatusCodes, responseMessages } from "../utils/http-status-code.js";
 
 export const participationController = {
 
-	//  User's participations
-	async getParticipationsByUser(req, res) {
-		try {
-			const { id } = req.params;
-			const user = await User.findByPk(id);
-			if (!user) {
-				return res.status(404).json({ message: "User non trouvé" });
-			}
+    //  User's participations
+    async getParticipationsByUser(req, res) {
+        try {
+            const { id } = req.params;
+            const user = await User.findByPk(id);
+            
+            if (!user) {
+                return res.status(httpStatusCodes.NOT_FOUND).json({ 
+                    status: httpStatusCodes.NOT_FOUND,
+                    error: "Utilisateur non trouvé" 
+                });
+            }
 
-			const userParticipations = await Participation.findAll({
-				where: { user_id: id },
-				include: [
-					{
-						model: User,
-						as: "player",
-						attributes: ["id", "username", "avatar"],
-					},
-					{
-						model: Challenge,
-						as: "challenge",
-						include: [
-							{
-								model: Game,
-								as: "game",
-								attributes: ["id", "title", "cover"],
-							},
-						],
-					},
-				],
-			});
+            const userParticipations = await Participation.findAll({
+                where: { user_id: id },
+                include: [
+                    {
+                        model: User,
+                        as: "player",
+                        attributes: ["id", "username", "avatar"],
+                    },
+                    {
+                        model: Challenge,
+                        as: "challenge",
+                        include: [
+                            {
+                                model: Game,
+                                as: "game",
+                                attributes: ["id", "title", "cover"],
+                            },
+                        ],
+                    },
+                ],
+            });
 
-			res.json(userParticipations);
-		} catch (error) {
-			console.error(error);
-			res.status(500).json({ message: "Erreur serveur" });
-		}
-	},
+            return res.status(httpStatusCodes.OK).json(userParticipations);
+            
+        } catch (error) {
+            console.error("Erreur serveur lors de la récupération des participations de l'utilisateur :", error);
+            return res.status(httpStatusCodes.SERVER_ERROR).json({ 
+                status: httpStatusCodes.SERVER_ERROR,
+                error: responseMessages[httpStatusCodes.SERVER_ERROR]
+            });
+        }
+    },
 
-	// Get participations bound to a challenge 
-	async getParticipationsByChallenge(req, res) {
+    // Get participations bound to a challenge 
+    async getParticipationsByChallenge(req, res) {
 
-		try {
+        try {
 
-			// Catch id from params
-			const { id } = req.params;
+            // Catch id from params
+            const { id } = req.params;
 
-			// Search challenge and participation bound to it
-			const challenge = await Challenge.findByPk(id, {
+            // Search challenge and participation bound to it
+            const challenge = await Challenge.findByPk(id, {
 
-				include: {
-					model: Participation,
-					as: "participations",
+                include: {
+                    model: Participation,
+                    as: "participations",
 
-					// To show in front the username and avatar of the player
-					include: {
-						model: User,
-						as: "player",
-						attributes: ["id", "username", "avatar"]
-					}
-				}
-			});
+                    // To show in front the username and avatar of the player
+                    include: {
+                        model: User,
+                        as: "player",
+                        attributes: ["id", "username", "avatar"]
+                    }
+                }
+            });
 
-			// If the challenge does not exist 
-			if (!challenge) {
-				console.error("L'id du challenge demandé n'existe pas.")
-				return res.status(404).json({ error: "Le challenge demandé n'existe pas." })
-			};
+            // If the challenge does not exist 
+            if (!challenge) {
+                console.error("L'id du challenge demandé n'existe pas.")
+                return res.status(httpStatusCodes.NOT_FOUND).json({ 
+                    status: httpStatusCodes.NOT_FOUND,
+                    error: "Le challenge demandé n'existe pas." 
+                });
+            };
 
-			return res.status(200).json(challenge)
+            return res.status(httpStatusCodes.OK).json(challenge);
 
-		} catch (error) {
+        } catch (error) {
 
-			console.error("Erreur de serveur lors de la recherche d'une participation à un challenge", error.message);
-			return res.status(500).json({ error: "Un problème est survenu avec le serveur." });
+            console.error("Erreur de serveur lors de la recherche d'une participation à un challenge", error.message);
+            return res.status(httpStatusCodes.SERVER_ERROR).json({ 
+                status: httpStatusCodes.SERVER_ERROR,
+                error: responseMessages[httpStatusCodes.SERVER_ERROR] 
+            });
 
-		}
-	},
+        }
+    },
 
-	// Share participation with url
-	async shareParticipation(req, res) {
+    // Share participation with url
+    async shareParticipation(req, res) {
 
-		try {
+        try {
 
-			const { id } = req.user
+            const { id } = req.user
 
-			const { title, url } = req.body;
+            const { title, url } = req.body;
 
-			const participation = await Participation.create({
-				title,
-				url,
-				user_id: id,
-			});
+            const participation = await Participation.create({
+                title,
+                url,
+                user_id: id,
+            });
 
-			return res.status(201).json({ message: "Votre vidéo a été ajoutée ! " })
+            return res.status(httpStatusCodes.CREATED).json({ 
+                message: "Votre vidéo a été ajoutée !" 
+            });
 
-		} catch (error) {
-			console.error("Erreur lors du partage de la participation", error.message);
-			return res.status(500).json({ error: "Une erreur interne au serveur s'est produite. Veuillez réessayer ultérieurement." })
-		}
-	}
-
-}
+        } catch (error) {
+            console.error("Erreur lors du partage de la participation", error.message);
+            return res.status(httpStatusCodes.SERVER_ERROR).json({ 
+                status: httpStatusCodes.SERVER_ERROR,
+                error: responseMessages[httpStatusCodes.SERVER_ERROR] 
+            });
+        }
+    }
+};

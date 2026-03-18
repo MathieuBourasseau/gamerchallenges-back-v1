@@ -1,5 +1,5 @@
-import { Game, Challenge } from "../Models/index.js";
-import { Sequelize } from "sequelize";
+import { Game, Challenge, Participation, User } from "../Models/index.js";
+import { fn, col, Sequelize } from "sequelize";
 
 export const gameController = {
 	async getAllGames(req, res) {
@@ -38,15 +38,41 @@ export const gameController = {
 					{
 						model: Challenge,
 						as: "challenges",
-						attributes: ["id", "name", "created_at"],
-						// order: [["created_at", "DESC"]],
+						attributes: [
+							"id",
+							"name",
+							"created_at",
+							// Total of votes on every participation of the challenge
+							[
+								fn("COUNT", col("challenges->participations->voters.id")),
+								"totalVotes",
+							],
+						],
+						include: [
+							{
+								model: Participation,
+								as: "participations",
+								attributes: [],
+								include: [
+									{
+										model: User,
+										as: "voters",
+										attributes: [],
+										through: { attributes: [] },
+									},
+								],
+							},
+						],
 					},
 				],
+				group: ["Game.id", "challenges.id"],
+				subQuery: false,
 			});
 
 			if (!game) return res.status(404).json({ error: "Jeu non trouvé" });
 			res.json(game);
 		} catch (error) {
+			console.error(error);
 			res.status(500).json({ error: "Erreur serveur" });
 		}
 	},

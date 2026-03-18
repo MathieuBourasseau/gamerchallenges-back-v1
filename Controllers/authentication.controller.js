@@ -31,7 +31,7 @@ export const authenticationUserController = {
       if (existingUser) {
         return res.status(httpStatusCodes.CONFLICT).json({
           status: httpStatusCodes.CONFLICT,
-          error: "Cet email existe déjà." 
+          error: "Cet email existe déjà."
         });
       }
 
@@ -71,7 +71,7 @@ export const authenticationUserController = {
       });
     } catch (error) {
       console.error("Register error:", error.details[0].message);
-      res.status(httpStatusCodes.SERVER_ERROR).json({ 
+      res.status(httpStatusCodes.SERVER_ERROR).json({
         status: httpStatusCodes.SERVER_ERROR,
         error: responseMessages[httpStatusCodes.SERVER_ERROR]
       });
@@ -89,18 +89,19 @@ export const authenticationUserController = {
       // Look for a user with this email
       const user = await User.findOne({ where: { email } });
       if (!user) {
-        return res.status(httpStatusCodes.NOT_FOUND).json({ 
+        return res.status(httpStatusCodes.NOT_FOUND).json({
           status: httpStatusCodes.NOT_FOUND,
-          error: "Cet utilisateur n'existe pas." 
+          error: "Cet utilisateur n'existe pas."
         });
       }
 
       // Verify the password using Argon2
       const isPasswordValid = await argon2.verify(user.password, password);
       if (!isPasswordValid) {
-        return res.status(httpStatusCodes.FORBIDDEN).json({ 
+        return res.status(httpStatusCodes.FORBIDDEN).json({
           status: httpStatusCodes.FORBIDDEN,
-          error: "Mot de passe incorrect" });
+          error: "Mot de passe incorrect"
+        });
       }
 
       // Generate a JWT
@@ -127,11 +128,13 @@ export const authenticationUserController = {
         },
       });
     } catch (error) {
-      console.error("Login error:", error);
-      res.status(httpStatusCodes.SERVER_ERROR).json({ 
-        status: httpStatusCodes.SERVER_ERROR,
-        error: responseMessages[httpStatusCodes.SERVER_ERROR] 
-      });
+      if (error.isJoi) {
+        console.error("Erreur de format (Login) :", error.details[0].message);
+        return res.status(httpStatusCodes.BAD_REQUEST).json({
+          status: httpStatusCodes.BAD_REQUEST,
+          error: error.details[0].message
+        });
+      }
     }
   },
 
@@ -157,9 +160,10 @@ export const authenticationUserController = {
       });
 
       if (!user) {
-        return res.status(httpStatusCodes.NOT_FOUND).json({ 
+        return res.status(httpStatusCodes.NOT_FOUND).json({
           status: httpStatusCodes.NOT_FOUND,
-          error: "Cet utilisateur n'existe pas." });
+          error: "Cet utilisateur n'existe pas."
+        });
       }
 
       // Build public avatar URL
@@ -176,9 +180,10 @@ export const authenticationUserController = {
       });
     } catch (error) {
       console.error("getMe error:", error);
-      res.status(httpStatusCodes.SERVER_ERROR).json({ 
+      res.status(httpStatusCodes.SERVER_ERROR).json({
         status: httpStatusCodes.SERVER_ERROR,
-        error: responseMessages[httpStatusCodes.SERVER_ERROR] });
+        error: responseMessages[httpStatusCodes.SERVER_ERROR]
+      });
     }
   },
 };

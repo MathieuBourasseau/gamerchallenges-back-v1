@@ -1,4 +1,5 @@
 import { Participation, Challenge, Game, sequelize } from "../Models/index.js";
+import { httpStatusCodes, responseMessages } from "../utils/http-status-code.js";
 
 export const homeController = {
   async getBestParticipations(req, res) {
@@ -7,8 +8,6 @@ export const homeController = {
         attributes: {
           include: [
             [
-              // Bon, avec un peu d'aide... apparemment sequelize ne sait pas compter les votes dans une relation many-to-many, donc on utilise une "sous-requête" (???) SQL pour calculer un champ "voteCount" à partir de la table de liaison "vote_participation"...
-              // Sequelize NE PEUT PAS(quel incapable...mdr)compter automatiquement les votes dans une relation many-to-many .
               sequelize.literal(`(
                 SELECT COUNT(*)
                 FROM vote_participation AS vp
@@ -19,7 +18,8 @@ export const homeController = {
           ],
         },
 
-        // On inclut le challenge lié à la participation avec les champs dont on a besoin et aussi le jeu lié au fameux challenge (ici pas bsoin des descriptions pour le template de l'accueil)
+        // Include the challenge linked to the participation with the required fields, 
+        // as well as the game linked to the challenge (descriptions are not needed for the home template)
         include: [
           {
             model: Challenge,
@@ -34,18 +34,26 @@ export const homeController = {
             ],
           },
         ],
-        // ensuite on fait le tri des participations en fonction du nbre de votes, ici avec "votecount" qui est crée dans notre sous-requête plus haut
+
+        // Then, sort the participations based on the number of votes, 
+        // using "voteCount" created in the subquery above
         order: [[sequelize.literal(`"voteCount"`), "DESC"]],
 
-        // et on limite aux 3 meilleures participations
+        // And limit to the top 3 best participations
         limit: 3,
       });
 
-      res.json(topParticipations);
+      // Send the participations with a 200 OK status
+      return res.status(httpStatusCodes.OK).json(topParticipations);
+
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erreur serveur" });
+      console.error("Error fetching top participations:", error);
+
+      // Standardized error response matching the frontend requirements
+      return res.status(httpStatusCodes.SERVER_ERROR).json({
+        status: httpStatusCodes.SERVER_ERROR,
+        error: responseMessages[httpStatusCodes.SERVER_ERROR]
+      });
     }
   },
 };
-// Punaise c'etait pas évident de faire ça j'ai vraiment dû m'aider avec une IA pour faire cette fameuse "sous-requête" SQL pour compter les votes ... arrachage de cheveux ....

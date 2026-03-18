@@ -1,3 +1,6 @@
+import { Game, Challenge } from "../Models/index.js";
+import { Sequelize } from "sequelize";
+import { httpStatusCodes, responseMessages } from "../utils/http-status-code.js";
 import { Game, Challenge, Participation, User } from "../Models/index.js";
 import { fn, col, Sequelize } from "sequelize";
 
@@ -17,7 +20,7 @@ export const gameController = {
 			const totalGames = await Game.count();
 			const totalPages = Math.ceil(totalGames / limit);
 
-			res.json({
+			res.status(httpStatusCodes.OK).json({
 				page,
 				totalPages,
 				totalGames,
@@ -25,14 +28,17 @@ export const gameController = {
 			});
 		} catch (error) {
 			console.error("Erreur Sequelize :", error);
-			res
-				.status(500)
-				.json({ error: "Erreur lors de la récupération des jeux" });
+			res.status(httpStatusCodes.SERVER_ERROR).json({
+					status: responseMessages[httpStatusCodes.SERVER_ERROR],
+					error: "Erreur lors de la récupération des jeux"
+				});
 		}
 	},
 
 	async getGameById(req, res) {
+		
 		try {
+
 			const game = await Game.findByPk(req.params.id, {
 				include: [
 					{
@@ -69,11 +75,18 @@ export const gameController = {
 				subQuery: false,
 			});
 
-			if (!game) return res.status(404).json({ error: "Jeu non trouvé" });
-			res.json(game);
+			if (!game) return res.status(httpStatusCodes.NOT_FOUND).json({
+				status: httpStatusCodes.NOT_FOUND, 
+				error: "Jeu non trouvé" 
+			});
+
+			res.status(httpStatusCodes.OK).json(game);
+
 		} catch (error) {
-			console.error(error);
-			res.status(500).json({ error: "Erreur serveur" });
+			res.status(500).json({
+				status: httpStatusCodes.SERVER_ERROR,
+				error: "Erreur lors de la récupération des jeux"
+			});
 		}
 	},
 };

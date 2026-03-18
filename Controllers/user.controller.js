@@ -1,5 +1,6 @@
 import { User } from "../Models/index.js";
 import argon2 from "argon2";
+import { httpStatusCodes, responseMessages } from "../utils/http-status-code.js";
 
 export const userController = {
   // Since we now have a dedicated authentication controller, the existing methods in this controller
@@ -13,7 +14,10 @@ export const userController = {
       // Fetch user
       const user = await User.findByPk(userId);
       if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        return res.status(httpStatusCodes.NOT_FOUND).json({ 
+            status: httpStatusCodes.NOT_FOUND,
+            error: "Utilisateur non trouvé" 
+        });
       }
 
       // Clone request body
@@ -39,13 +43,16 @@ export const userController = {
       }
 
       // Return updated user with full avatar URL
-      res.status(200).json({
+      return res.status(httpStatusCodes.OK).json({
         ...user.toJSON(),
         avatar: avatarUrl,
       });
     } catch (error) {
       console.error("updateMe error:", error);
-      res.status(500).json({ error: "Error updating user" });
+      return res.status(httpStatusCodes.SERVER_ERROR).json({ 
+          status: httpStatusCodes.SERVER_ERROR,
+          error: "Erreur lors de la mise à jour de l'utilisateur" 
+      });
     }
   },
 
@@ -57,13 +64,19 @@ export const userController = {
 
       const user = await User.findByPk(userId);
       if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        return res.status(httpStatusCodes.NOT_FOUND).json({ 
+            status: httpStatusCodes.NOT_FOUND,
+            error: "Utilisateur non trouvé" 
+        });
       }
 
       // Verify old password
       const isMatch = await argon2.verify(user.password, oldPassword);
       if (!isMatch) {
-        return res.status(400).json({ error: "Old password is incorrect" });
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ 
+            status: httpStatusCodes.BAD_REQUEST,
+            error: "L'ancien mot de passe est incorrect" 
+        });
       }
 
       // Hash new password
@@ -72,32 +85,39 @@ export const userController = {
       // Update user password
       await user.update({ password: hashedPassword });
 
-      res.status(200).json({ message: "Password updated successfully" });
+      return res.status(httpStatusCodes.OK).json({ message: "Mot de passe mis à jour avec succès" });
     } catch (error) {
       console.error("changePassword error:", error);
-      res.status(500).json({ error: "Error changing password" });
+      return res.status(httpStatusCodes.SERVER_ERROR).json({ 
+          status: httpStatusCodes.SERVER_ERROR,
+          error: "Erreur lors du changement de mot de passe" 
+      });
     }
   },
 
   // Delete his own account :
-
   async deleteMe(req, res) {
     try {
       const userId = req.user.id;
       const deletedCount = await User.destroy({ where: { id: userId } });
 
       if (deletedCount === 0) {
-        return res.status(404).json({ error: "Utilisateur non trouvé" });
+        return res.status(httpStatusCodes.NOT_FOUND).json({ 
+            status: httpStatusCodes.NOT_FOUND,
+            error: "Utilisateur non trouvé" 
+        });
       }
 
-      return res.status(200).json({ message: "Compte supprimé avec succès" });
+      return res.status(httpStatusCodes.OK).json({ message: "Compte supprimé avec succès" });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({
+      return res.status(httpStatusCodes.SERVER_ERROR).json({
+        status: httpStatusCodes.SERVER_ERROR,
         error: "Une erreur est survenue lors de la suppression du compte",
       });
     }
   },
+  
   // All users list
   async getAllUsers(req, res) {
     try {
@@ -105,14 +125,17 @@ export const userController = {
         attributes: ["id", "username", "avatar"],
       });
 
-      res.json(users);
+      return res.status(httpStatusCodes.OK).json(users);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Erreur serveur" });
+      return res.status(httpStatusCodes.SERVER_ERROR).json({ 
+          status: httpStatusCodes.SERVER_ERROR,
+          error: responseMessages[httpStatusCodes.SERVER_ERROR] 
+      });
     }
   },
 
-  //  get all user infos
+  // get all user infos
   async getUserById(req, res) {
     try {
       const { id } = req.params;
@@ -128,13 +151,21 @@ export const userController = {
           "discord",
         ],
       });
+      
       if (!user) {
-        return res.status(404).json({ message: "User non trouvé" });
+        return res.status(httpStatusCodes.NOT_FOUND).json({ 
+            status: httpStatusCodes.NOT_FOUND,
+            error: "Utilisateur non trouvé" 
+        });
       }
-      res.json(user);
+      
+      return res.status(httpStatusCodes.OK).json(user);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Erreur serveur" });
+      return res.status(httpStatusCodes.SERVER_ERROR).json({ 
+          status: httpStatusCodes.SERVER_ERROR,
+          error: responseMessages[httpStatusCodes.SERVER_ERROR] 
+      });
     }
   },
 
@@ -145,13 +176,17 @@ export const userController = {
       const deletedCount = await User.destroy({ where: { id } });
 
       if (deletedCount === 0) {
-        return res.status(404).json({ error: "Utilisateur non trouvé" });
+        return res.status(httpStatusCodes.NOT_FOUND).json({ 
+            status: httpStatusCodes.NOT_FOUND,
+            error: "Utilisateur non trouvé" 
+        });
       }
 
-      return res.status(200).json({ message: "Compte supprimé avec succès" });
+      return res.status(httpStatusCodes.OK).json({ message: "Compte supprimé avec succès" });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({
+      return res.status(httpStatusCodes.SERVER_ERROR).json({
+        status: httpStatusCodes.SERVER_ERROR,
         error: "Une erreur est survenue lors de la suppression du compte",
       });
     }
@@ -163,12 +198,19 @@ export const userController = {
       const { id } = req.params;
 
       if (!id) {
-        return res.status(400).json({ error: "L'ID utilisateur est requis" });
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ 
+            status: httpStatusCodes.BAD_REQUEST,
+            error: "L'ID utilisateur est requis" 
+        });
       }
 
       const user = await User.findByPk(id);
-      if (!user)
-        return res.status(404).json({ error: "Utilisateur non trouvé" });
+      if (!user) {
+        return res.status(httpStatusCodes.NOT_FOUND).json({ 
+            status: httpStatusCodes.NOT_FOUND,
+            error: "Utilisateur non trouvé" 
+        });
+      }
 
       const validatedData = { ...req.body };
 
@@ -182,12 +224,13 @@ export const userController = {
 
       await user.update(validatedData);
 
-      res.status(200).json({ user });
+      return res.status(httpStatusCodes.OK).json({ user });
     } catch (error) {
       console.error(error);
-      res
-        .status(500)
-        .json({ error: "Erreur lors de la modification des informations" });
+      return res.status(httpStatusCodes.SERVER_ERROR).json({ 
+          status: httpStatusCodes.SERVER_ERROR,
+          error: "Erreur lors de la modification des informations" 
+      });
     }
   },
 };

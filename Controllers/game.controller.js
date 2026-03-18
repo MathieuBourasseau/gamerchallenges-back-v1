@@ -1,5 +1,3 @@
-import { Game, Challenge } from "../Models/index.js";
-import { Sequelize } from "sequelize";
 import { httpStatusCodes, responseMessages } from "../utils/http-status-code.js";
 import { Game, Challenge, Participation, User } from "../Models/index.js";
 import { fn, col, Sequelize } from "sequelize";

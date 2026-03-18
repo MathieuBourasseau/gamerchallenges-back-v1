@@ -70,7 +70,7 @@ export const authenticationUserController = {
         },
       });
     } catch (error) {
-      console.error("Register error:", error);
+      console.error("Register error:", error.details[0].message);
       res.status(httpStatusCodes.SERVER_ERROR).json({ 
         status: httpStatusCodes.SERVER_ERROR,
         error: responseMessages[httpStatusCodes.SERVER_ERROR]

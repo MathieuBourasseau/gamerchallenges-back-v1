@@ -45,6 +45,7 @@ export const contactController = {
       return res
         .status(httpStatusCodes.SERVER_ERROR)
         .json({
+          status: httpStatusCodes.SERVER_ERROR,
           error: responseMessages[httpStatusCodes.SERVER_ERROR],
         });
     }

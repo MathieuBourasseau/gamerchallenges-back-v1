@@ -21,7 +21,7 @@ export const authenticationUserController = {
       // Ensure the user accepted the privacy policy (GDPR compliance)
       if (!acceptPolicy) {
         return res.status(httpStatusCodes.BAD_REQUEST).json({
-          status: responseMessages[httpStatusCodes.BAD_REQUEST],
+          status: httpStatusCodes.BAD_REQUEST, // Correction ici pour utiliser le code
           error: "Vous devez accepter la politique de traitement des données.",
         });
       }
@@ -70,8 +70,17 @@ export const authenticationUserController = {
         },
       });
     } catch (error) {
-      console.error("Register error:", error.details[0].message);
-      res.status(httpStatusCodes.SERVER_ERROR).json({
+  
+      if (error.isJoi) {
+        console.error("Erreur de validation (Register) :", error.details[0].message);
+        return res.status(httpStatusCodes.BAD_REQUEST).json({
+          status: httpStatusCodes.BAD_REQUEST,
+          error: error.details[0].message
+        });
+      }
+
+      console.error("Erreur serveur (Register) :", error.message);
+      return res.status(httpStatusCodes.SERVER_ERROR).json({
         status: httpStatusCodes.SERVER_ERROR,
         error: responseMessages[httpStatusCodes.SERVER_ERROR]
       });
@@ -100,7 +109,7 @@ export const authenticationUserController = {
       if (!isPasswordValid) {
         return res.status(httpStatusCodes.FORBIDDEN).json({
           status: httpStatusCodes.FORBIDDEN,
-          error: "Mot de passe incorrect"
+          error: "L'email ou le mot de passe est incorrect." 
         });
       }
 
@@ -116,7 +125,7 @@ export const authenticationUserController = {
       );
 
       // Send response back to the client
-      res.status(httpStatusCodes.OK).json({
+      return res.status(httpStatusCodes.OK).json({
         message: "Connexion de l'utilisateur réussie",
         token,
         user: {
@@ -135,6 +144,12 @@ export const authenticationUserController = {
           error: error.details[0].message
         });
       }
+
+      console.error("Erreur serveur (Login) :", error.message);
+      return res.status(httpStatusCodes.SERVER_ERROR).json({
+        status: httpStatusCodes.SERVER_ERROR,
+        error: responseMessages[httpStatusCodes.SERVER_ERROR]
+      });
     }
   },
 
@@ -173,14 +188,14 @@ export const authenticationUserController = {
       }
 
       // Return user with full avatar URL
-      res.status(httpStatusCodes.OK).json({
+      return res.status(httpStatusCodes.OK).json({
         status: httpStatusCodes.OK,
         ...user.toJSON(),
         avatar: avatarUrl,
       });
     } catch (error) {
-      console.error("getMe error:", error);
-      res.status(httpStatusCodes.SERVER_ERROR).json({
+      console.error("getMe error:", error.message);
+      return res.status(httpStatusCodes.SERVER_ERROR).json({
         status: httpStatusCodes.SERVER_ERROR,
         error: responseMessages[httpStatusCodes.SERVER_ERROR]
       });

@@ -35,6 +35,7 @@ export const challengeController = {
 	},
 
 	//  --- METHOD TO GET A CHALLENGE BY ITS ID ---
+	//  --- METHOD TO GET A CHALLENGE BY ITS ID ---
 	async getChallengeById(req, res) {
 		try {
 			// Get id from params
@@ -42,6 +43,9 @@ export const challengeController = {
 
 			// Check if the challenge is existing in DB
 			const challenge = await Challenge.findByPk(id, {
+				// The attributes configuration calculating the global COUNT has been removed
+				// because it conflicts with the "group by participations.id" below.
+				// We will calculate the total in JavaScript instead.
 				include: [
 					// Include Game model to get the image associated
 					{
@@ -57,6 +61,7 @@ export const challengeController = {
 							"id",
 							"url",
 							// Calculate the vote count per participation and save it in "voteCounted"
+							// This COUNT works perfectly because it respects the "group: ['participations.id']"
 							[fn("COUNT", col("participations->voters.id")), "voteCounted"],
 						],
 
@@ -92,8 +97,23 @@ export const challengeController = {
 					.json({ error: "Le challenge demandé n'existe pas." });
 			}
 
-			// Sent to front the challenge selected
-			return res.status(200).json(challenge);
+			// Convert the Sequelize instance into a plain JavaScript object
+			// to allow us to modify it and add the new total property
+			const challengeData = challenge.toJSON();
+
+			// Calculate the total number of votes for the entire challenge
+			// We use .reduce() to iterate over the participations array and sum all the 'voteCounted'
+			challengeData.totalChallengeVotes = challengeData.participations.reduce(
+				(total, participation) => {
+					// We cast to Number() because PostgreSQL COUNT results can sometimes be returned as strings by Sequelize
+					return total + Number(participation.voteCounted);
+				},
+				0 // 0 is the initial value of the 'total' accumulator
+			);
+
+			// Sent to front the challenge selected, including the new calculated total
+			return res.status(200).json(challengeData);
+
 		} catch (error) {
 			console.error("Erreur lors de la recherche du challenge", error.message);
 			return res
@@ -123,14 +143,14 @@ export const challengeController = {
 				],
 			});
 
-      res.status(httpStatusCodes.OK).json(userChallenges);
+			res.status(httpStatusCodes.OK).json(userChallenges);
 
-    } catch (error) {
-      console.error(error);
-      res.status(httpStatusCodes.SERVER_ERROR).json({
-        status: httpStatusCodes.SERVER_ERROR,
-        message: responseMessages[httpStatusCodes.SERVER_ERROR],
-      });
-    }
-  },
+		} catch (error) {
+			console.error(error);
+			res.status(httpStatusCodes.SERVER_ERROR).json({
+				status: httpStatusCodes.SERVER_ERROR,
+				message: responseMessages[httpStatusCodes.SERVER_ERROR],
+			});
+		}
+	},
 };

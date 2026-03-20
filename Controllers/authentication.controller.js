@@ -43,7 +43,7 @@ export const authenticationUserController = {
         username,
         email,
         password: hashedPassword,
-        avatar: req.file ? req.file.path : null, //ternary operator to handle optional avatar upload
+        avatar: req.file ? req.file.path : "uploads/avatars/default-avatar.png"
       });
 
       // Generate a JWT for authentication

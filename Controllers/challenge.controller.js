@@ -1,156 +1,169 @@
 import {
-	Challenge,
-	Game,
-	Participation,
-	User,
-	sequelize,
+  Challenge,
+  Game,
+  Participation,
+  User,
 } from "../Models/index.js";
-import { fn, col, Op } from "sequelize";
+import { fn, col, literal } from "sequelize";
 import { httpStatusCodes, responseMessages } from "../utils/http-status-code.js";
 
 export const challengeController = {
-	async getAllChallenges(req, res) {
-		try {
-			const challenges = await Challenge.findAll({
-				// order: sequelize.random(), on verra pour le tri avec les copains
-				include: [
-					{
-						model: Game,
-						as: "game",
-						attributes: ["id", "title", "cover"],
-					},
-					{
-						model: User,
-						as: "creator",
-						attributes: ["id", "username"],
-					},
-				],
-			});
+  async getAllChallenges(req, res) {
+    try {
+      const challenges = await Challenge.findAll({
+        include: [
+          {
+            model: Game,
+            as: "game",
+            attributes: ["id", "title", "cover"],
+          },
+          {
+            model: User,
+            as: "creator",
+            attributes: ["id", "username"],
+          },
+        ],
+      });
 
-			res.json(challenges);
-		} catch (error) {
-			console.error(error);
-			res.status(500).json({ message: "Erreur serveur" });
-		}
-	},
+      res.json(challenges);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  },
 
-	//  --- METHOD TO GET A CHALLENGE BY ITS ID ---
-	//  --- METHOD TO GET A CHALLENGE BY ITS ID ---
-	async getChallengeById(req, res) {
-		try {
-			// Get id from params
-			const { id } = req.params;
+  async getTopChallenges(req, res) {
+    try {
+      const topChallenges = await Challenge.findAll({
+        attributes: [
+          "id",
+          "name",
+          "description",
+          "created_at",
+          [fn("COUNT", col("participations.id")), "participationCount"],
+        ],
+        include: [
+          {
+            model: Game,
+            as: "game",
+            attributes: ["id", "title", "cover"],
+          },
+          {
+            model: User,
+            as: "creator",
+            attributes: ["id", "username"],
+          },
+          {
+            model: Participation,
+            as: "participations",
+            attributes: [],
+          },
+        ],
+        group: ["Challenge.id", "game.id", "creator.id"],
+        order: [[literal('"participationCount"'), "DESC"]],
+        limit: 3,
+        subQuery: false,
+      });
 
-			// Check if the challenge is existing in DB
-			const challenge = await Challenge.findByPk(id, {
-				// The attributes configuration calculating the global COUNT has been removed
-				// because it conflicts with the "group by participations.id" below.
-				// We will calculate the total in JavaScript instead.
-				include: [
-					// Include Game model to get the image associated
-					{
-						model: Game,
-						as: "game",
-						attributes: ["id", "cover"],
-					},
-					// Include Participation model to get videos participations associated to it
-					{
-						model: Participation,
-						as: "participations",
-						attributes: [
-							"id",
-							"url",
-							// Calculate the vote count per participation and save it in "voteCounted"
-							// This COUNT works perfectly because it respects the "group: ['participations.id']"
-							[fn("COUNT", col("participations->voters.id")), "voteCounted"],
-						],
+      return res.status(httpStatusCodes.OK).json(topChallenges);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des top challenges :", error);
+      return res.status(httpStatusCodes.SERVER_ERROR).json({
+        status: httpStatusCodes.SERVER_ERROR,
+        message: responseMessages[httpStatusCodes.SERVER_ERROR],
+      });
+    }
+  },
 
-						// Include User model to get the voters on each participation
-						include: [
-							{
-								model: User,
-								as: "voters",
-								attributes: [],
-								through: { attributes: [] },
-							},
-						],
-					},
-				],
-				// Group by these IDs to ensure the COUNT function calculates the total
-				// without merging all participations or game info into a single row.
-				group: [
-					"Challenge.id", // Keep the main challenge unique
-					"game.id", // Keep associated game info linked
-					"participations.id", // Prevent the list of participation videos from being collapsed
-				],
+  async getChallengeById(req, res) {
+    try {
+      const { id } = req.params;
 
-				// Disable subqueries to allow the COUNT function to access
-				// the joined tables (Participations -> Voters) directly.
-				subQuery: false,
-			});
+      const challenge = await Challenge.findByPk(id, {
+        include: [
+          {
+            model: Game,
+            as: "game",
+            attributes: ["id", "cover"],
+          },
+          {
+            model: Participation,
+            as: "participations",
+            attributes: [
+              "id",
+              "url",
+              [fn("COUNT", col("participations->voters.id")), "voteCounted"],
+            ],
+            include: [
+              {
+                model: User,
+                as: "voters",
+                attributes: [],
+                through: { attributes: [] },
+              },
+            ],
+          },
+        ],
+        group: [
+          "Challenge.id",
+          "game.id",
+          "participations.id",
+        ],
+        subQuery: false,
+      });
 
-			// Error message sent if the challenge does not exist
-			if (!challenge) {
-				console.error("Le challenge demandé n'existe pas.");
-				return res
-					.status(404)
-					.json({ error: "Le challenge demandé n'existe pas." });
-			}
+      if (!challenge) {
+        console.error("Le challenge demandé n'existe pas.");
+        return res
+          .status(404)
+          .json({ error: "Le challenge demandé n'existe pas." });
+      }
 
-			// Convert the Sequelize instance into a plain JavaScript object
-			// to allow us to modify it and add the new total property
-			const challengeData = challenge.toJSON();
+      const challengeData = challenge.toJSON();
 
-			// Calculate the total number of votes for the entire challenge
-			// We use .reduce() to iterate over the participations array and sum all the 'voteCounted'
-			challengeData.totalChallengeVotes = challengeData.participations.reduce(
-				(total, participation) => {
-					// We cast to Number() because PostgreSQL COUNT results can sometimes be returned as strings by Sequelize
-					return total + Number(participation.voteCounted);
-				},
-				0 // 0 is the initial value of the 'total' accumulator
-			);
+      challengeData.totalChallengeVotes = challengeData.participations.reduce(
+        (total, participation) => {
+          return total + Number(participation.voteCounted);
+        },
+        0
+      );
 
-			// Sent to front the challenge selected, including the new calculated total
-			return res.status(200).json(challengeData);
+      return res.status(200).json(challengeData);
+    } catch (error) {
+      console.error("Erreur lors de la recherche du challenge", error.message);
+      return res
+        .status(500)
+        .json({ error: "Un problème est survenu avec le serveur." });
+    }
+  },
 
-		} catch (error) {
-			console.error("Erreur lors de la recherche du challenge", error.message);
-			return res
-				.status(500)
-				.json({ error: "Un problème est survenu avec le serveur." });
-		}
-	},
+  async getChallengesByUser(req, res) {
+    try {
+      const { id } = req.params;
 
-	//  les challenges créés par un user
-	async getChallengesByUser(req, res) {
-		try {
-			const { id } = req.params;
+      const user = await User.findByPk(id);
+      if (!user) {
+        return res.status(404).json({ message: "User non trouvé" });
+      }
 
-			const user = await User.findByPk(id);
-			if (!user) {
-				return res.status(404).json({ message: "User non trouvé" });
-			}
+      const userChallenges = await Challenge.findAll({
+        where: { user_id: id },
+        include: [
+          {
+            model: Game,
+            as: "game",
+            attributes: ["id", "title", "cover"],
+          },
+        ],
+      });
 
-			const userChallenges = await Challenge.findAll({
-				where: { user_id: id },
-				include: [
-					{
-						model: Game,
-						as: "game",
-						attributes: ["id", "title", "cover"],
-					},
-				],
-			});
-
-			res.status(httpStatusCodes.OK).json(userChallenges);
-
-		} catch (error) {
-			console.error(error);
-			res.status(httpStatusCodes.SERVER_ERROR).json({
-				status: httpStatusCodes.SERVER_ERROR,
-				message: responseMessages[httpStatusCodes.SERVER_ERROR],
-			});
-		}
-	},
+      res.status(httpStatusCodes.OK).json(userChallenges);
+    } catch (error) {
+      console.error(error);
+      res.status(httpStatusCodes.SERVER_ERROR).json({
+        status: httpStatusCodes.SERVER_ERROR,
+        message: responseMessages[httpStatusCodes.SERVER_ERROR],
+      });
+    }
+  },
 };

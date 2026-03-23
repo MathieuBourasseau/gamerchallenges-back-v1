@@ -25,10 +25,13 @@ export const challengeController = {
         ],
       });
 
-      res.json(challenges);
+      return res.status(httpStatusCodes.OK).json(challenges);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erreur serveur" });
+      console.error("Erreur lors de la récupération des challenges :", error);
+      return res.status(httpStatusCodes.SERVER_ERROR).json({
+        status: httpStatusCodes.SERVER_ERROR,
+        error: responseMessages[httpStatusCodes.SERVER_ERROR],
+      });
     }
   },
 
@@ -70,7 +73,7 @@ export const challengeController = {
       console.error("Erreur lors de la récupération des top challenges :", error);
       return res.status(httpStatusCodes.SERVER_ERROR).json({
         status: httpStatusCodes.SERVER_ERROR,
-        message: responseMessages[httpStatusCodes.SERVER_ERROR],
+        error: responseMessages[httpStatusCodes.SERVER_ERROR],
       });
     }
   },
@@ -113,10 +116,10 @@ export const challengeController = {
       });
 
       if (!challenge) {
-        console.error("Le challenge demandé n'existe pas.");
-        return res
-          .status(404)
-          .json({ error: "Le challenge demandé n'existe pas." });
+        return res.status(httpStatusCodes.NOT_FOUND).json({
+          status: httpStatusCodes.NOT_FOUND,
+          error: "Le challenge demandé n'existe pas.",
+        });
       }
 
       const challengeData = challenge.toJSON();
@@ -128,12 +131,13 @@ export const challengeController = {
         0
       );
 
-      return res.status(200).json(challengeData);
+      return res.status(httpStatusCodes.OK).json(challengeData);
     } catch (error) {
-      console.error("Erreur lors de la recherche du challenge", error.message);
-      return res
-        .status(500)
-        .json({ error: "Un problème est survenu avec le serveur." });
+      console.error("Erreur lors de la récupération du challenge :", error);
+      return res.status(httpStatusCodes.SERVER_ERROR).json({
+        status: httpStatusCodes.SERVER_ERROR,
+        error: responseMessages[httpStatusCodes.SERVER_ERROR],
+      });
     }
   },
 
@@ -143,7 +147,10 @@ export const challengeController = {
 
       const user = await User.findByPk(id);
       if (!user) {
-        return res.status(404).json({ message: "User non trouvé" });
+        return res.status(httpStatusCodes.NOT_FOUND).json({
+          status: httpStatusCodes.NOT_FOUND,
+          error: "User non trouvé",
+        });
       }
 
       const userChallenges = await Challenge.findAll({
@@ -157,12 +164,15 @@ export const challengeController = {
         ],
       });
 
-      res.status(httpStatusCodes.OK).json(userChallenges);
+      return res.status(httpStatusCodes.OK).json(userChallenges);
     } catch (error) {
-      console.error(error);
-      res.status(httpStatusCodes.SERVER_ERROR).json({
+      console.error(
+        "Erreur lors de la récupération des challenges du user :",
+        error,
+      );
+      return res.status(httpStatusCodes.SERVER_ERROR).json({
         status: httpStatusCodes.SERVER_ERROR,
-        message: responseMessages[httpStatusCodes.SERVER_ERROR],
+        error: responseMessages[httpStatusCodes.SERVER_ERROR],
       });
     }
   },

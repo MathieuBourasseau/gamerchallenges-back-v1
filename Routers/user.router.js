@@ -38,7 +38,6 @@ userRouter.delete("/me", authenticate, userController.deleteMe);
 
 userRouter.get("/users/:id", userController.getUserById);
 //userRouter.get("/users", userController.getAllUsers);
-//userRouter.get("/users/:id", userController.getUserById);
 // userRouter.delete("/users/:id", userController.deleteUser);
 
 // userRouter.patch(

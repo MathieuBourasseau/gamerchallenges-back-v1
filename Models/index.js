@@ -23,7 +23,7 @@ Participation.belongsTo(Challenge, {foreignKey: "challenge_id", as: "challenge"}
 Challenge.hasMany(Participation, {foreignKey: "challenge_id", as: "participations"});
 
 
-// table de liaison vote_participation 
+// Link tables
 Participation.belongsToMany(User, {
   through: "vote_participation",
   foreignKey: "participation_id",

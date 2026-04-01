@@ -10,6 +10,12 @@ export const sequelize = new Sequelize(
    {
       // Disable Sequelize SQL logs in the console to keep the output clean
       logging: false, 
+      dialectOptions: {
+         ssl: {
+            require: true,
+            rejectUnauthorized: false 
+         }
+      },
       define: {
           // Mapping Sequelize default field names to match the database's snake_case convention
           createdAt: "created_at", 

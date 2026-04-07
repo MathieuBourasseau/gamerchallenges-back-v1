@@ -44,8 +44,6 @@ L'architecture est organisée de manière modulaire pour une séparation claire 
 
 ## 🚀 Procédure de Déploiement & Initialisation
 
-## 🚀 Procédure d'Initialisation (Base de données)
-
 L'API est conçue pour être mise en service rapidement grâce aux scripts d'automatisation inclus dans le `package.json`.
 
 ### 1. Préparation de l'environnement
